@@ -31,39 +31,39 @@ import Security from "../../assets/images/security.jpg";
 
 const data = [
   {
-    title: "Event Creation Made Easy",
+    title: "Simplified Event Creation",
     description:
-      "Seamlessly create and manage events with our intuitive event creation feature. Specify event details, such as date, time, location, and description, to provide a clear picture for your attendees. Customize event settings, add event images, and set ticket options effortlessly.",
+      "Effortlessly establish and manage events with our user-friendly event creation functionality. Define event specifics such as dates, times, locations, and descriptions to provide attendees with a clear understanding. Customize event configurations, incorporate event visuals, and establish ticketing choices with ease.",
     icon: <IoCreateOutline />,
   },
   {
-    title: "Realtime Notifications",
+    title: "Real-Time Updates",
     description:
-      "Stay updated on event activities with our realtime notification feature. Receive notifications on event updates, attendee responses, and more. Never miss out on important event details with our notification feature.",
+      "Stay informed about event developments with our real-time notification system. Receive alerts regarding event changes, attendee responses, and more. Never overlook crucial event information with our notification capability.",
     icon: <IoNotificationsOutline />,
   },
   {
-    title: "Seamless User Invitations",
+    title: "Effortless Participant Invitations",
     description:
-      "Invite participants effortlessly by sending invitation links directly through our app. Share invitation links via email, messaging apps, or social media platforms. Ensure a smooth registration process and track attendee responses for effective event management.",
+      "Invite participants effortlessly by disseminating invitation links directly through our application. Share invitation links via email, messaging platforms, or social media channels. Ensure a smooth registration process and monitor attendee responses for effective event coordination.",
     icon: <IoTicketOutline />,
   },
   {
-    title: "Flexible Event Privacy",
+    title: "Adaptable Event Privacy",
     description:
-      "Take control over event visibility with our private and public event options. Host private gatherings with exclusive access for selected participants or organize public events to reach a wider audience. Customize privacy settings to suit the unique needs of each event.",
+      "Exercise authority over event visibility with our selection of private and public event alternatives. Arrange private gatherings with restricted access for chosen invitees or arrange public events to engage a broader audience. Tailor privacy settings to accommodate the distinct requirements of each event.",
     icon: <MdOutlinePrivacyTip />,
   },
   {
-    title: "Easy Attendee Management",
+    title: "Simple Attendee Management",
     description:
-      "Keep track of attendees our comprehensive attendee management feature. Easily view and manage RSVPs, track attendance, and collect essential participant information. Scan QR Codes to check-in attendees and ensure a smooth event experience for all participants.",
+      "Monitor attendees effortlessly with our comprehensive attendee management feature. Easily monitor and manage RSVPs, track attendance, and gather essential participant details. Utilize QR Codes to check-in attendees and ensure a seamless event experience for all participants.",
     icon: <IoPeopleOutline />,
   },
   {
-    title: "Download Attendee List",
+    title: "Attendee List Download",
     description:
-      "Staying always connected is unsure in the age of internet. So SpotLight lets the event owners download a list of attendees for each event with our attendee list download feature. Export attendee lists in XLSX format for easy access and management.",
+      "In an era of uncertain connectivity, it's crucial to remain connected. Thus, SearchMyClub enables event hosts to download attendee lists for each event through our attendee list download feature. Export attendee lists in XLSX format for convenient access and management.",
     icon: <MdOutlineFileDownload />,
   }
 ];
@@ -82,13 +82,19 @@ function Landing() {
             className="flex flex-col gap-4 items-center justify-center z-10"
             style={{ flexBasis: "50%" }}
           >
-            <h1 className=" text-2xl md:text-4xl lg:text-6xl text-slate-100 font-bold leading-relaxed lg:leading-normal drop-shadow-2xl">
-              Spotlight Your Creativity
+            <h1 className=" text-xl md:text-4xl lg:text-6xl text-slate-100 font-bold leading-relaxed lg:leading-normal drop-shadow-2xl">
+            Ignite Your Creativity
               <br />
-              Curate Unforgettable Events
+              Design Unforgettable Gatherings
+            </h1>
+            <p className=" md:max-w-[90%] py-2 text-lg text-slate-400">
+              with
+            </p>
+            <h1 className=" text-2xl md:text-4xl lg:text-6xl text-slate-100 font-bold leading-relaxed lg:leading-normal drop-shadow-2xl">
+              SearchMyClub
             </h1>
             <p className=" md:max-w-[90%] py-4 text-slate-400">
-              RSVP and Management Made Effortless for Creators
+            Effortless RSVP and Coordination for Creators
             </p>
             <div className="inline-flex items-center gap-2">
               <Link
@@ -120,15 +126,11 @@ function Landing() {
             <hr className="w-20 h-1 bg-accent"></hr>
           </p>
           <h1 className="text-3xl md:text-5xl text-primary font-semibold md:leading-normal">
-            Unlock Your Creative Potential
+            Unlock Your Creative Drive
           </h1>
           <hr className="w-full border border-neutral-200"></hr>
           <p className="text-sm leading-[1.4rem] md:max-w-[90%] py-4 text-neutral-500 text-justify">
-            Our app empowers individual contributors and artists like you to
-            unleash your creativity and organize remarkable events. Whether
-            you're planning a solo exhibition, a live performance, or a
-            collaborative workshop, our platform provides the tools and features
-            you need to make your events a resounding success.
+          Our platform empowers individual creators and artists like you to unleash your imagination and orchestrate unforgettable gatherings. Whether you're organizing a solo showcase, a live performance, or a collaborative workshop, our tools and features equip you to make your events a remarkable success.
           </p>
           <Link
             to={token ? "Go to Dashboard" : "/auth/signup"}
@@ -146,17 +148,12 @@ function Landing() {
                 <div className="w-20 h-1 bg-accent"></div> Secure
               </p>
               <h1 className="text-3xl md:text-5xl text-white font-semibold md:leading-normal">
-                Seamless Event Planning and Organization
+              Effortless Event Planning and Coordination
               </h1>
             </div>
           </div>
-          <p className="flex-[80%] w-full text-sm leading-[1.4rem] md:max-w-[90%] py-4 text-slate-400 text-justify">
-            Say goodbye to the hassles of event planning. Our user-friendly
-            interface simplifies the process, allowing you to focus on your
-            artistic endeavors. Create and manage events effortlessly, from
-            setting dates and locations to providing event descriptions and
-            ticketing options. Streamline your planning process and bring your
-            vision to reality.
+          <p className="flex-[80%] w-full text-sm leading-[1.4rem] md:max-w-[90%] py-4 text-white text-justify">
+          Bid farewell to the complexities of event organization. Our intuitive interface simplifies the process, enabling you to concentrate on your artistic pursuits. Seamlessly create and oversee events, from scheduling dates and venues to furnishing event details and ticketing options. Streamline your planning journey and transform your vision into reality.
           </p>
         </section>
         <div className="flex flex-row gap-4 items-center justify-between container">
@@ -222,16 +219,11 @@ function Landing() {
             <hr className="w-20 h-1 bg-accent"></hr> Registrations Made Easy
           </p>
           <h1 className="text-3xl md:text-5xl text-primary font-semibold md:leading-normal">
-            Security and Reliability
+          Safety and Dependability
           </h1>
           <hr className="w-full border border-neutral-200"></hr>
           <p className="text-sm leading-[1.4rem] md:max-w-[90%] py-4 text-neutral-500 text-justify">
-            Rest assured that your event data is safe and secure with our web
-            app. We prioritize data protection and employ industry-standard
-            security measures to safeguard your information. Our reliable
-            infrastructure ensures that your event management process remains
-            uninterrupted, allowing you to focus on what matters most – creating
-            exceptional events.
+          Rest assured that your event information is safeguarded with our web application. We prioritize data security and implement industry-standard measures to protect your data. Our robust infrastructure ensures uninterrupted event management, allowing you to concentrate on creating exceptional experiences.
           </p>
           <Link
             to={token ? "/dashboard" : "/auth/signup"}
