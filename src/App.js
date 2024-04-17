@@ -41,8 +41,8 @@ function App() {
             }
           >
             <Route path="/" element={<Landing />} />
-            <Route path="explore" element={<Explore />} />
             <Route path="event/:id" element={<EventPage />} />
+            <Route path="explore" element={<Explore />} />
             <Route path="auth" element={<AuthLayout />}>
               <Route path="login" element={<Login />} />
               <Route path="signup" element={<Signup />} />
