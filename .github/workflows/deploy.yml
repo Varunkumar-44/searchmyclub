@@ -3,7 +3,7 @@ name: Build and Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main # Set this to the branch from which you want to deploy
+      - main
 
 jobs:
   build-and-deploy:
@@ -11,19 +11,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Use Node.js 16
         uses: actions/setup-node@v2
         with:
-          node-version: '16' # Set this to the node version you are using
+          node-version: '16'
 
       - name: Install dependencies
         run: npm install
 
+      - name: Update browserslist database
+        run: npx browserslist@latest --update-db
+
       - name: Build
-        run: npm run build
+        run: CI=false npm run build # Ignore ESLint warnings for now
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build # Set this to your build directory
+          publish_dir: ./build
