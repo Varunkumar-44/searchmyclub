@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
-import Loading from "../../components/Loading";
-import UserList from "../../components/UserList";
-import client from "../../appwrite.config";
-import { Databases, Query } from "appwrite";
+import React, { useCallback, useEffect, useState } from 'react';
+import Loading from '../../components/Loading';
+import UserList from '../../components/UserList';
+import client from '../../appwrite.config';
+import { Databases, Query } from 'appwrite';
 import {
   MdOutlinePersonAdd,
   MdOutlinePersonRemove,
   MdPeopleOutline,
-} from "react-icons/md";
+} from 'react-icons/md';
 
 function Rsvps() {
   const [rsvps, setRsvps] = useState(null);
@@ -15,22 +15,22 @@ function Rsvps() {
   const [loadingRsvps, setLoadingRsvps] = useState(false);
   const [eventId, setEventId] = useState(null);
 
-  const userId = JSON.parse(localStorage.getItem("token"))?.userId;
+  const userId = JSON.parse(localStorage.getItem('token'))?.userId;
 
   const getEventRsvps = useCallback(async () => {
     if (userId) {
       try {
-        setLoadingRsvps((prev) => true);
+        setLoadingRsvps(prev => true);
         const database = new Databases(client);
         const response = await database.listDocuments(
           process.env.REACT_APP_DATABASE_ID,
           process.env.REACT_APP_RSVP_COLLECTION_ID,
-          [Query.equal("ownerUserId", userId), Query.equal("pending", true)]
+          [Query.equal('ownerUserId', userId), Query.equal('pending', true)]
         );
-        
-        setRsvps((prev) => response?.documents);
+
+        setRsvps(prev => response?.documents);
         const groupedData = {};
-        response?.documents?.forEach((document) => {
+        response?.documents?.forEach(document => {
           const key = `${document.eventName}_${document.eventId}`;
           if (!groupedData[key]) {
             groupedData[key] = {
@@ -62,18 +62,14 @@ function Rsvps() {
           };
           groupedData[key].users.push(user);
         });
-        
-        
-        setSimplifiedRsvps((prev) => Object.values(groupedData));
+
+        setSimplifiedRsvps(prev => Object.values(groupedData));
       } catch (err) {
-        
       } finally {
-        setLoadingRsvps((prev) => false);
+        setLoadingRsvps(prev => false);
       }
     }
   }, [userId]);
-
-  
 
   useEffect(() => {
     if (userId) getEventRsvps();
@@ -85,11 +81,11 @@ function Rsvps() {
     <>
       {simplifiedRsvps && simplifiedRsvps?.length > 0 ? (
         <div className="flex w-full flex-col py-6 group">
-          {simplifiedRsvps?.map((event) => (
+          {simplifiedRsvps?.map(event => (
             <div className="flex w-full justify-between py-4 border-b-neutral-200 border-b">
               <h3
                 className="text-lg font-semibold cursor-pointer"
-                onClick={(e) => {
+                onClick={e => {
                   e?.preventDefault();
                   setEventId(event?.eventId);
                 }}
@@ -122,13 +118,11 @@ function Rsvps() {
       {eventId && (
         <UserList
           fetchingUsers={loadingRsvps}
-          toggleShowUsers={(e) => {
+          toggleShowUsers={e => {
             e?.preventDefault();
-            setEventId((prev) => null);
+            setEventId(prev => null);
           }}
-          users={
-            simplifiedRsvps.find((event) => event.eventId === eventId).users
-          }
+          users={simplifiedRsvps.find(event => event.eventId === eventId).users}
         />
       )}
     </>

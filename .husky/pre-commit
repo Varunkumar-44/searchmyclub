@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run Prettier
+npm run prettier
+
+# Automatically add the changes made by Prettier to the commit
+git add .

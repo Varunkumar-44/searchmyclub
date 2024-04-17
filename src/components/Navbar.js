@@ -1,37 +1,36 @@
-import { useEffect, useState } from "react";
-import { RiMenu3Line } from "react-icons/ri";
-import { NavLink } from "react-router-dom";
-import LogoutLogic from "../Logic/UserLogic.js/Logout.logic";
-import Brand from "./Brand";
+import { useEffect, useState } from 'react';
+import { RiMenu3Line } from 'react-icons/ri';
+import { NavLink } from 'react-router-dom';
+import LogoutLogic from '../Logic/UserLogic.js/Logout.logic';
+import Brand from './Brand';
 
 function Navbar() {
   const [toggleMenu, setToggleMenu] = useState(false);
 
   const [navData, setNavData] = useState([]);
 
-  let token = localStorage.getItem("token");
+  let token = localStorage.getItem('token');
 
   useEffect(() => {
-    
-    setNavData((prev) => [
+    setNavData(prev => [
       {
-        title: "Explore",
-        link: "/explore",
+        title: 'Explore',
+        link: '/explore',
         show: true,
       },
       {
-        title: "Dashboard",
-        link: "/dashboard",
+        title: 'Dashboard',
+        link: '/dashboard',
         show: token ? true : false,
       },
       {
-        title: "Login",
-        link: "/auth/login",
+        title: 'Login',
+        link: '/auth/login',
         show: token ? false : true,
       },
       {
-        title: "Signup",
-        link: "/auth/signup",
+        title: 'Signup',
+        link: '/auth/signup',
         show: token ? false : true,
       },
     ]);
@@ -56,7 +55,7 @@ function Navbar() {
                   (item, index) =>
                     item.show && (
                       <NavLink
-                        onClick={() => setToggleMenu((prev) => false)}
+                        onClick={() => setToggleMenu(prev => false)}
                         key={index}
                         to={item.link}
                         className="hover:text-accent"
@@ -82,7 +81,7 @@ function Navbar() {
         {/* mobile navigation */}
         <div
           className={`fixed z-40 w-full bg-secondary overflow-hidden flex flex-col lg:hidden gap-12  origin-top duration-700 font-poppins ${
-            !toggleMenu ? "h-0" : "h-full"
+            !toggleMenu ? 'h-0' : 'h-full'
           }`}
         >
           <div className="px-8">
@@ -91,7 +90,7 @@ function Navbar() {
                 (item, index) =>
                   item.show && (
                     <NavLink
-                      onClick={() => setToggleMenu((prev) => false)}
+                      onClick={() => setToggleMenu(prev => false)}
                       key={index}
                       to={item.link}
                       className="hover:text-accent"

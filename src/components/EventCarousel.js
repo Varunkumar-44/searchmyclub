@@ -1,14 +1,11 @@
-import React, { useRef } from "react";
-import { IoArrowBack, IoArrowForward } from "react-icons/io5";
-import { Navigation } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/react";
-import ExploreEventCard from "./ExploreEventCard";
+import React, { useRef } from 'react';
+import { IoArrowBack, IoArrowForward } from 'react-icons/io5';
+import { Navigation } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import ExploreEventCard from './ExploreEventCard';
 
 function EventCarousel({ events, title }) {
   const swiperRef = useRef(null);
-  
-  
-  
 
   return (
     <div>
@@ -40,20 +37,20 @@ function EventCarousel({ events, title }) {
           spaceBetween={20}
           breakpoints={{
             360: {
-                slidesPerView: 1,
+              slidesPerView: 1,
             },
             560: {
-                slidesPerView: 2,
+              slidesPerView: 2,
             },
             640: {
               slidesPerView: 3,
             },
             820: {
               slidesPerView: 4,
-            }
+            },
           }}
         >
-          {events?.map((item) => (
+          {events?.map(item => (
             <SwiperSlide>
               <ExploreEventCard {...item} />
             </SwiperSlide>

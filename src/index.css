@@ -1,5 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -11,7 +11,7 @@ body,
 .app {
   height: 100%;
   width: 100%;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   @apply bg-gray-100;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
@@ -26,7 +26,7 @@ body,
 .swiper-pagination-bullet-active {
   outline: 1px solid;
   outline-offset: 3px;
-  @apply outline-accent
+  @apply outline-accent;
 }
 
 * {
@@ -37,7 +37,6 @@ body,
 ::-webkit-scrollbar {
   width: 0.4rem;
 }
-
 
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
@@ -58,7 +57,7 @@ body,
 }
 
 .event-swiper {
-  padding-inline: 0 !important; 
+  padding-inline: 0 !important;
   padding-block: var(--event-swiper-padding-block) !important;
 }
 
@@ -75,7 +74,7 @@ body,
 .testimonial-title::after {
   content: open-quote;
   position: absolute;
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: Georgia, 'Times New Roman', Times, serif;
   isolation: isolate;
   font-size: 13rem;
   z-index: -1;
@@ -90,7 +89,7 @@ body,
     padding-inline: 0 !important;
   }
   .event-swiper {
-    padding-inline: 0 !important; 
+    padding-inline: 0 !important;
     padding-block: var(--event-swiper-padding-block) !important;
   }
 }
@@ -103,7 +102,7 @@ body,
     padding-inline: 0 !important;
   }
   .event-swiper {
-    padding-inline: 0 !important; 
+    padding-inline: 0 !important;
     padding-block: var(--event-swiper-padding-block) !important;
   }
 }
@@ -114,9 +113,8 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-
 /* Firefox */
-input[type=number] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 
@@ -128,7 +126,7 @@ input[type=number] {
     padding-inline: 0 !important;
   }
   .event-swiper {
-    padding-inline: 0 !important; 
+    padding-inline: 0 !important;
     padding-block: var(--event-swiper-padding-block) !important;
   }
 }
@@ -146,22 +144,20 @@ input[type=number] {
 }
 
 .primary-btn {
-  @apply p-2 px-4 my-2 rounded-md text-sm font-medium text-white bg-primary hover:shadow-md focus:outline-none  inline-flex items-center gap-2
+  @apply p-2 px-4 my-2 rounded-md text-sm font-medium text-white bg-primary hover:shadow-md focus:outline-none  inline-flex items-center gap-2;
 }
 
 .page-title {
-    @apply text-2xl font-bold;
+  @apply text-2xl font-bold;
 }
 
 form {
   @apply flex flex-col gap-4;
 }
 
-
 button {
   @apply active:scale-95 transition-all duration-100 ease-in-out;
 }
-
 
 #ticket {
   @apply bg-white rounded-[18px] shadow-md p-1;

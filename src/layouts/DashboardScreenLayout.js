@@ -1,8 +1,8 @@
-import React from "react";
-import { IoAdd } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { IoAdd } from 'react-icons/io5';
+import { Link } from 'react-router-dom';
 
-function DashboardScreenLayout({children, title}) {
+function DashboardScreenLayout({ children, title }) {
   return (
     <div>
       <div className="inline-flex justify-between w-full items-center">

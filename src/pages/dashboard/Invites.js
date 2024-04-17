@@ -1,14 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
-import Loading from "../../components/Loading";
-import { IoPeopleOutline } from "react-icons/io5";
-import GetMembershipLogic from "../../Logic/Membership/GetMembership.logic";
-import UserList from "../../components/UserList";
-import client from "../../appwrite.config";
-import { Teams } from "appwrite";
+import React, { useCallback, useEffect, useState } from 'react';
+import Loading from '../../components/Loading';
+import { IoPeopleOutline } from 'react-icons/io5';
+import GetMembershipLogic from '../../Logic/Membership/GetMembership.logic';
+import UserList from '../../components/UserList';
+import client from '../../appwrite.config';
+import { Teams } from 'appwrite';
 
 function Invites() {
-  const { loading, error, teams, deleteInvitation } =
-    GetMembershipLogic();
+  const { loading, error, teams, deleteInvitation } = GetMembershipLogic();
 
   const [teamId, setTeamId] = useState(null);
   const [memberships, setMemberships] = useState(null);
@@ -17,14 +16,13 @@ function Invites() {
   const getTeamMemberships = useCallback(async () => {
     if (teamId) {
       try {
-        setLoadingMemberships((prev) => true);
+        setLoadingMemberships(prev => true);
         const teams = new Teams(client);
         const response = await teams.listMemberships(teamId);
-        setMemberships((prev) => response?.memberships);
+        setMemberships(prev => response?.memberships);
       } catch (err) {
-        
       } finally {
-        setLoadingMemberships((prev) => false);
+        setLoadingMemberships(prev => false);
       }
     }
   }, [teamId]);
@@ -40,13 +38,13 @@ function Invites() {
       {error && <p>{error}</p>}
       {teams && teams?.length > 0 ? (
         <div className="flex w-full flex-col py-6 group">
-          {teams.map((team) => (
+          {teams.map(team => (
             <div
               key={team?.$id}
               className="flex py-4 justify-between border-b border-neutral-300 group gap-2 items-center"
             >
               <h3
-                onClick={(e) => {
+                onClick={e => {
                   e?.preventDefault();
                   setTeamId(team?.$id);
                 }}
@@ -55,7 +53,7 @@ function Invites() {
                 {team.name}
               </h3>
               <button
-                onClick={(e) => {
+                onClick={e => {
                   e?.preventDefault();
                   setTeamId(team?.$id);
                 }}
@@ -70,7 +68,7 @@ function Invites() {
               >
                 <IoRemove />
                 <p>Delete Invitation</p>
-              </button> */} 
+              </button> */}
             </div>
           ))}
         </div>
@@ -81,12 +79,12 @@ function Invites() {
         <UserList
           deleteInvitation={deleteInvitation}
           fetchingUsers={loadingMemberships}
-          toggleShowUsers={(e) => {
+          toggleShowUsers={e => {
             e?.preventDefault();
-            setTeamId((prev) => null);
+            setTeamId(prev => null);
           }}
           users={memberships}
-          teamName = {teams.find((team) => team.$id === teamId)?.name}
+          teamName={teams.find(team => team.$id === teamId)?.name}
         />
       )}
     </>

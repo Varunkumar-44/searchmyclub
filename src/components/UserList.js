@@ -1,14 +1,14 @@
-import React, { useCallback, useState } from "react";
-import { IoClose, IoDownload, IoPerson, IoSearch } from "react-icons/io5";
-import Loading from "./Loading";
-import { toast } from "react-hot-toast";
-import { useLocation } from "react-router-dom";
-import { MdDownloadForOffline, MdHandshake, MdPeople } from "react-icons/md";
-import { useNotifications } from "../context/notificationContext";
-import RsvpLogic from "../Logic/Explore/rsvp.logic";
-import { Databases, Query } from "appwrite";
-import client from "../appwrite.config";
-import * as XLSX from "xlsx";
+import React, { useCallback, useState } from 'react';
+import { IoClose, IoDownload, IoPerson, IoSearch } from 'react-icons/io5';
+import Loading from './Loading';
+import { toast } from 'react-hot-toast';
+import { useLocation } from 'react-router-dom';
+import { MdDownloadForOffline, MdHandshake, MdPeople } from 'react-icons/md';
+import { useNotifications } from '../context/notificationContext';
+import RsvpLogic from '../Logic/Explore/rsvp.logic';
+import { Databases, Query } from 'appwrite';
+import client from '../appwrite.config';
+import * as XLSX from 'xlsx';
 
 function UserList({
   toggleShowUsers,
@@ -24,10 +24,6 @@ function UserList({
 }) {
   const [filteredUsers, setFilteredUsers] = useState(null);
   const { pathname } = useLocation();
-
-  
-  
-  
 
   const { sendNotification } = useNotifications();
   const { approveRsvp, rejectRsvp } = RsvpLogic();
@@ -48,41 +44,36 @@ function UserList({
   ];
 
   const filterUsers = useCallback(
-    (e) => {
+    e => {
       const value = e.target.value.toLowerCase();
-      const filtered = users.filter((user) => {
-        
-        
-        
+      const filtered = users.filter(user => {
         return (
-          (user?.name ?? user?.userName).toLowerCase().includes(value || "") ||
-          (user.email ?? user?.userEmail).toLowerCase().includes(value || "") ||
-          user?.roles?.join(",").includes(value || "")
+          (user?.name ?? user?.userName).toLowerCase().includes(value || '') ||
+          (user.email ?? user?.userEmail).toLowerCase().includes(value || '') ||
+          user?.roles?.join(',').includes(value || '')
         );
       });
-      setFilteredUsers((prev) => filtered);
+      setFilteredUsers(prev => filtered);
     },
     [users]
   );
 
-  const checkUserIsOwner = (id) => {
-    const userId = JSON.parse(localStorage.getItem("spotlight-user"))?.["$id"];
-    const user = users?.find((user) => user?.userId === (id ?? userId));
-    return user?.roles?.includes("owner") ?? false;
+  const checkUserIsOwner = id => {
+    const userId = JSON.parse(localStorage.getItem('spotlight-user'))?.['$id'];
+    const user = users?.find(user => user?.userId === (id ?? userId));
+    return user?.roles?.includes('owner') ?? false;
   };
 
-  const checkUserRoles = (id) => {
-    const userId = JSON.parse(localStorage.getItem("spotlight-user"))?.["$id"];
-    const user = users?.find((user) => user?.userId === (id ?? userId));
-    
-    
-    
+  const checkUserRoles = id => {
+    const userId = JSON.parse(localStorage.getItem('spotlight-user'))?.['$id'];
+    const user = users?.find(user => user?.userId === (id ?? userId));
+
     return user?.roles;
   };
 
-  const userMembershipId = (id) => {
-    const userId = JSON.parse(localStorage.getItem("spotlight-user"))?.["$id"];
-    const user = users.find((user) => user?.userId === (id ?? userId));
+  const userMembershipId = id => {
+    const userId = JSON.parse(localStorage.getItem('spotlight-user'))?.['$id'];
+    const user = users.find(user => user?.userId === (id ?? userId));
     return {
       membershipId: user?.$id,
       teamId: user?.teamId,
@@ -91,10 +82,9 @@ function UserList({
   };
 
   const handleInvite = async (user, role) => {
-    
-    const fromUser = JSON.parse(localStorage.getItem("spotlight-user"));
+    const fromUser = JSON.parse(localStorage.getItem('spotlight-user'));
     try {
-      if (typeof createMembership === "function") {
+      if (typeof createMembership === 'function') {
         const res = await createMembership({
           eventId: id,
           teamId: events?.teamId,
@@ -103,7 +93,7 @@ function UserList({
           email: user.email,
           role,
         });
-        
+
         toast.success(`${user.name} has been invited to the event`);
 
         await sendNotification({
@@ -121,25 +111,24 @@ function UserList({
             process.env.REACT_APP_DATABASE_ID,
             process.env.REACT_APP_RSVP_COLLECTION_ID,
             [
-              Query.equal("teamId", events?.teamId),
-              Query.equal("userId", user?.userId),
+              Query.equal('teamId', events?.teamId),
+              Query.equal('userId', user?.userId),
             ]
           );
-          
+
           if (res?.documents?.length > 0) {
             const delRes = await databases.deleteDocument(
               process.env.REACT_APP_DATABASE_ID,
               process.env.REACT_APP_RSVP_COLLECTION_ID,
               res?.documents[0]?.$id
             );
-            
           }
-          toast.success("Invitation deleted");
+          toast.success('Invitation deleted');
           await sendNotification({
             userId: user.userId,
             message: `Your invitation to join ${teamName} event as a ${checkUserRoles(
               user?.userId
-            ).join("/")} has been revoked by the owner.`,
+            ).join('/')} has been revoked by the owner.`,
             fromUserId: fromUser?.$id,
             fromUserName: fromUser?.name,
           });
@@ -148,31 +137,30 @@ function UserList({
         }
       }
     } catch (err) {
-      
       toast.error(err.message);
     } finally {
     }
   };
 
-  const downloadExcel = (data) => {
-    const sanitizedData = data?.map((user) => {
+  const downloadExcel = data => {
+    const sanitizedData = data?.map(user => {
       return {
-        "Membarship ID": user?.$id,
-        "Name": user?.userName,
-        "Email": user?.userEmail,
-        "User ID": user?.userId,
-        "Invited": user?.invited,
-        "Joined": user?.joined,
-        "Confirm": user?.confirm,
-        "Roles": user?.roles?.join(","),
-      }
-    })
+        'Membarship ID': user?.$id,
+        Name: user?.userName,
+        Email: user?.userEmail,
+        'User ID': user?.userId,
+        Invited: user?.invited,
+        Joined: user?.joined,
+        Confirm: user?.confirm,
+        Roles: user?.roles?.join(','),
+      };
+    });
     const worksheet = XLSX.utils.json_to_sheet(sanitizedData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
     //let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
     //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-    XLSX.writeFile(workbook, "DataSheet.xlsx");
+    XLSX.writeFile(workbook, 'DataSheet.xlsx');
   };
 
   return (
@@ -182,16 +170,16 @@ function UserList({
       </button>
       <div className="w-full space-y-4">
         <p className="page-title">
-          Search {deleteInvitation ? "Members" : "Users"}{" "}
+          Search {deleteInvitation ? 'Members' : 'Users'}{' '}
           {checkUserIsOwner() && (
             <button
-              onClick={(e) => {
+              onClick={e => {
                 e?.preventDefault();
                 downloadExcel(users);
               }}
               className="primary-btn items-center"
               style={{
-                fontSize: "0.6rem",
+                fontSize: '0.6rem',
               }}
             >
               <MdDownloadForOffline className="text-base" /> Download XLSX
@@ -213,7 +201,7 @@ function UserList({
         <Loading />
       ) : (
         <div className="flex flex-col gap-2 overflow-auto h-full">
-          {(filteredUsers ?? users)?.map((u) => (
+          {(filteredUsers ?? users)?.map(u => (
             <div
               key={u.$id ?? u?.userId}
               className="w-full px-3 pb-2 border-b border-neutral-200  flex items-center justify-between gap-2"
@@ -223,9 +211,9 @@ function UserList({
                 style={{
                   backgroundColor: `rgb(${colors[
                     Math.floor(Math.random() * 5) + 3
-                  ]?.join(",")})`,
+                  ]?.join(',')})`,
                   color: `rgb(${colors[Math.floor(Math.random() * 2) + 1]?.join(
-                    ","
+                    ','
                   )})`,
                 }}
               >
@@ -237,22 +225,22 @@ function UserList({
                   {u?.email ?? u?.userEmail}
                 </p>
               </div>
-              {checkUserRoles(u?.userId)?.map((role) => {
-                if (role === "owner")
+              {checkUserRoles(u?.userId)?.map(role => {
+                if (role === 'owner')
                   return (
                     <IoPerson
                       title="Owner"
                       className="p-2 bg-gradient-to-br from-yellow-400 to-yellow-600 text-neutral-100 rounded-full text-3xl flex"
                     />
                   );
-                if (role === "collaborator")
+                if (role === 'collaborator')
                   return (
                     <MdHandshake
                       title="Collaborator"
                       className="p-2 bg-gradient-to-br from-primary/80 to-primary text-neutral-100 rounded-full text-3xl flex"
                     />
                   );
-                if (role === "volunteer")
+                if (role === 'volunteer')
                   return (
                     <MdPeople
                       title="Volunteer"
@@ -266,28 +254,28 @@ function UserList({
                   disabled={checkUserIsOwner(u?.userId)}
                   style={{
                     display:
-                      checkUserIsOwner(u?.userId) || pathname.includes("rsvp")
-                        ? "none"
-                        : "block",
+                      checkUserIsOwner(u?.userId) || pathname.includes('rsvp')
+                        ? 'none'
+                        : 'block',
                   }}
-                  onClick={async (e) => {
+                  onClick={async e => {
                     e?.preventDefault();
-                    
-                    toast.custom((t) =>
-                      typeof createMembership === "function" ? (
+
+                    toast.custom(t =>
+                      typeof createMembership === 'function' ? (
                         <form
-                          onSubmit={async (e) => {
+                          onSubmit={async e => {
                             e?.preventDefault();
                             const form = e.target;
                             const formData = Object.fromEntries(
                               new FormData(form)
                             );
-                            
+
                             await handleInvite(u, formData.role);
                             toast.dismiss(t.id);
                           }}
                           className={`${
-                            t.visible ? "animate-enter" : "animate-leave"
+                            t.visible ? 'animate-enter' : 'animate-leave'
                           } max-w-md w-full bg-white shadow-lg rounded-[18px] overflow-hidden pointer-events-auto grid grid-cols-3`}
                         >
                           <div className="flex-1 col-span-2 p-4 w-full">
@@ -298,11 +286,11 @@ function UserList({
                                   user?
                                 </p>
                                 <select name="role">
-                                  <option value={"collaborator"}>
+                                  <option value={'collaborator'}>
                                     Collaborator
                                   </option>
-                                  <option value={"volunteer"}>Volunteer</option>
-                                  <option value={"attendee"}>Attendee</option>
+                                  <option value={'volunteer'}>Volunteer</option>
+                                  <option value={'attendee'}>Attendee</option>
                                 </select>
                               </div>
                             </div>
@@ -315,7 +303,7 @@ function UserList({
                               Invite
                             </button>
                             <button
-                              onClick={async (e) => {
+                              onClick={async e => {
                                 e?.preventDefault();
                                 toast.dismiss(t.id);
                               }}
@@ -328,7 +316,7 @@ function UserList({
                       ) : (
                         <div
                           className={`${
-                            t.visible ? "animate-enter" : "animate-leave"
+                            t.visible ? 'animate-enter' : 'animate-leave'
                           } max-w-md w-full bg-white shadow-lg rounded-[18px] overflow-hidden pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
                         >
                           <div className="flex-1 w-0 p-4">
@@ -369,33 +357,33 @@ function UserList({
                   }}
                   className="sidebar-link focus:primary-btn"
                 >
-                  {typeof checkMembership === "function"
+                  {typeof checkMembership === 'function'
                     ? checkMembership(u?.userId)
                     : checkUserIsOwner(u?.userId)
-                    ? // <IoPerson
-                      //   title="Owner"
-                      //   className="p-2 bg-gradient-to-br from-yellow-400 to-yellow-600 text-neutral-100 rounded-full text-3xl flex"
-                      // />
-                      null
-                    : checkUserIsOwner() && (
-                        <> {u.joined ? "Delete" : "Pending"}</>
-                      )}
+                      ? // <IoPerson
+                        //   title="Owner"
+                        //   className="p-2 bg-gradient-to-br from-yellow-400 to-yellow-600 text-neutral-100 rounded-full text-3xl flex"
+                        // />
+                        null
+                      : checkUserIsOwner() && (
+                          <> {u.joined ? 'Delete' : 'Pending'}</>
+                        )}
                 </button>
               }
-              {pathname.includes("rsvp") && (
+              {pathname.includes('rsvp') && (
                 <div className="inline-flex gap-1 items-center">
                   <button
                     disabled={u?.approved}
-                    onClick={async (e) => {
+                    onClick={async e => {
                       e?.preventDefault();
                       await approveRsvp(u);
                     }}
                     className="sidebar-link focus:primary-btn disabled:bg-green-500 disabled:text-white disabled:cursor-not-allowed"
                   >
-                    Approve{u?.approved ? "d" : ""}
+                    Approve{u?.approved ? 'd' : ''}
                   </button>
                   <button
-                    onClick={async (e) => {
+                    onClick={async e => {
                       e?.preventDefault();
                       await rejectRsvp(u);
                     }}
@@ -409,35 +397,34 @@ function UserList({
           ))}
           {deleteInvitation && !checkUserIsOwner() && (
             <button
-              onClick={async (e) => {
+              onClick={async e => {
                 e?.preventDefault();
                 try {
                   const { teamId, membershipId, userId } = userMembershipId();
                   await deleteInvitation({ teamId, membershipId });
-                  toast.success("Invitation deleted");
+                  toast.success('Invitation deleted');
                   const user = JSON.parse(
-                    localStorage.getItem("spotlight-user")
+                    localStorage.getItem('spotlight-user')
                   );
                   const databases = new Databases(client);
                   const res = await databases.listDocuments(
                     process.env.REACT_APP_DATABASE_ID,
                     process.env.REACT_APP_RSVP_COLLECTION_ID,
                     [
-                      Query.equal("teamId", teamId),
-                      Query.equal("userId", userId),
+                      Query.equal('teamId', teamId),
+                      Query.equal('userId', userId),
                     ]
                   );
-                  
+
                   if (res?.documents?.length > 0) {
                     const delRes = await databases.deleteDocument(
                       process.env.REACT_APP_DATABASE_ID,
                       process.env.REACT_APP_RSVP_COLLECTION_ID,
                       res?.documents[0]?.$id
                     );
-                    
                   }
-                  const owner = users?.find((u) =>
-                    u?.roles?.includes("owner")
+                  const owner = users?.find(u =>
+                    u?.roles?.includes('owner')
                   )?.userId;
                   await sendNotification({
                     userId: owner,

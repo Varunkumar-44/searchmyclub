@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import GetEventLogic from "../../Logic/EventsLogic/getEvents";
-import EventCard from "../../components/EventCard";
-import Loading from "../../components/Loading";
+import React, { useEffect, useState } from 'react';
+import GetEventLogic from '../../Logic/EventsLogic/getEvents';
+import EventCard from '../../components/EventCard';
+import Loading from '../../components/Loading';
 
 function Events() {
   const {
@@ -20,18 +20,18 @@ function Events() {
   const [filteredEvents, setFilteredEvents] = useState(null);
 
   useEffect(() => {
-    const filter = searchParams.get("filter");
+    const filter = searchParams.get('filter');
     // const search = searchParams.get("search") ?? "";
-    if (filter === "total") {
-      setFilteredEvents((prev) => events);
-    } else if (filter === "private") {
-      setFilteredEvents((prev) => privateEvent);
-    } else if (filter === "public") {
-      setFilteredEvents((prev) => publicEvent);
-    } else if (filter === "offline") {
-      setFilteredEvents((prev) => offlineEvent);
-    } else if (filter === "online") {
-      setFilteredEvents((prev) => onlineEvent);
+    if (filter === 'total') {
+      setFilteredEvents(prev => events);
+    } else if (filter === 'private') {
+      setFilteredEvents(prev => privateEvent);
+    } else if (filter === 'public') {
+      setFilteredEvents(prev => publicEvent);
+    } else if (filter === 'offline') {
+      setFilteredEvents(prev => offlineEvent);
+    } else if (filter === 'online') {
+      setFilteredEvents(prev => onlineEvent);
     }
   }, [events, searchParams]);
 
@@ -39,15 +39,17 @@ function Events() {
     <>
       <div className="w-full px-6 my-4 rounded-[18px] bg-neutral-200 outline outline-1 outline-neutral-200 flex items-center justify-between">
         <input
-          onChange={(e) => {
+          onChange={e => {
             e?.preventDefault();
-            setFilteredEvents((prev) =>
+            setFilteredEvents(prev =>
               events?.filter(
-                (event) =>
+                event =>
                   event?.title
                     ?.toLowerCase()
-                    .includes(e.target.value?.toLowerCase() ?? "") &&
-                  (filter === 'total' ?  true : (event.medium === filter || event.privacy === filter))
+                    .includes(e.target.value?.toLowerCase() ?? '') &&
+                  (filter === 'total'
+                    ? true
+                    : event.medium === filter || event.privacy === filter)
               )
             );
           }}
@@ -57,7 +59,7 @@ function Events() {
         />
         <select
           defaultValue={filter}
-          onChange={(e) => {
+          onChange={e => {
             e?.preventDefault();
             setSearchParams({ filter: e.target.value });
           }}

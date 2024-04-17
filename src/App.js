@@ -1,29 +1,29 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingLayout from "./layouts/LandingLayout";
-import Login from "./pages/landing/Login";
-import Signup from "./pages/landing/Signup";
-import DashboardLayout from "./layouts/DashboardLayout";
-import Dashboard from "./pages/dashboard/Dashboard";
-import Account from "./pages/dashboard/Account";
-import AuthLayout from "./layouts/AuthLayout";
-import { Toaster } from "react-hot-toast";
-import Phone from "./pages/landing/Phone";
-import Otp from "./pages/landing/Otp";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Create from "./pages/dashboard/Create";
-import Events from "./pages/dashboard/Events";
-import Event from "./pages/dashboard/Event";
-import AcceptInvite from "./pages/AcceptInvite";
-import Invites from "./pages/dashboard/Invites";
-import VeirfyEmail from "./pages/VerifyEmail";
-import Landing from "./pages/landing/Landing";
-import Explore from "./pages/landing/Explore";
-import EventPage from "./pages/landing/EventPage";
-import Ticket from "./components/Ticket";
-import Rsvps from "./pages/dashboard/Rsvp";
-import DashboardScreenLayout from "./layouts/DashboardScreenLayout";
-import MarkAttendance from "./pages/MarkAttendance";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingLayout from './layouts/LandingLayout';
+import Login from './pages/landing/Login';
+import Signup from './pages/landing/Signup';
+import DashboardLayout from './layouts/DashboardLayout';
+import Dashboard from './pages/dashboard/Dashboard';
+import Account from './pages/dashboard/Account';
+import AuthLayout from './layouts/AuthLayout';
+import { Toaster } from 'react-hot-toast';
+import Phone from './pages/landing/Phone';
+import Otp from './pages/landing/Otp';
+import ProtectedRoute from './components/ProtectedRoute';
+import Create from './pages/dashboard/Create';
+import Events from './pages/dashboard/Events';
+import Event from './pages/dashboard/Event';
+import AcceptInvite from './pages/AcceptInvite';
+import Invites from './pages/dashboard/Invites';
+import VeirfyEmail from './pages/VerifyEmail';
+import Landing from './pages/landing/Landing';
+import Explore from './pages/landing/Explore';
+import EventPage from './pages/landing/EventPage';
+import Ticket from './components/Ticket';
+import Rsvps from './pages/dashboard/Rsvp';
+import DashboardScreenLayout from './layouts/DashboardScreenLayout';
+import MarkAttendance from './pages/MarkAttendance';
 
 function App() {
   return (
@@ -65,7 +65,7 @@ function App() {
             <Route
               path="events"
               element={
-                <DashboardScreenLayout title={"Your Events"}>
+                <DashboardScreenLayout title={'Your Events'}>
                   <Events />
                 </DashboardScreenLayout>
               }
@@ -73,7 +73,7 @@ function App() {
             <Route
               path="invities"
               element={
-                <DashboardScreenLayout title={"Your Invites"}>
+                <DashboardScreenLayout title={'Your Invites'}>
                   <Invites />
                 </DashboardScreenLayout>
               }
@@ -81,9 +81,9 @@ function App() {
             <Route
               path="rsvp"
               element={
-                <DashboardScreenLayout title={"Your RSVPs"}>
-                  {" "}
-                  <Rsvps />{" "}
+                <DashboardScreenLayout title={'Your RSVPs'}>
+                  {' '}
+                  <Rsvps />{' '}
                 </DashboardScreenLayout>
               }
             />

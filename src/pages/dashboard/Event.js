@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from "react";
-import GetEventLogic from "../../Logic/EventsLogic/getEvents";
-import { Link } from "react-router-dom";
-import {
-  MdComputer,
-  MdDelete,
-  MdEdit,
-} from "react-icons/md";
-import { ColorExtractor } from "react-color-extractor";
+import React, { useEffect, useState } from 'react';
+import GetEventLogic from '../../Logic/EventsLogic/getEvents';
+import { Link } from 'react-router-dom';
+import { MdComputer, MdDelete, MdEdit } from 'react-icons/md';
+import { ColorExtractor } from 'react-color-extractor';
 
-import CreateMembershipLogic from "../../Logic/Membership/CreateMembership.logic";
+import CreateMembershipLogic from '../../Logic/Membership/CreateMembership.logic';
 
 import {
   IoCopy,
@@ -16,15 +12,15 @@ import {
   IoPeopleOutline,
   IoPersonOutline,
   IoWalletOutline,
-} from "react-icons/io5";
+} from 'react-icons/io5';
 
-import { toast } from "react-hot-toast";
-import { Databases, Teams } from "appwrite";
-import client from "../../appwrite.config";
-import { useNavigate } from "react-router-dom";
-import Loading from "../../components/Loading";
-import GetUsersLogic from "../../Logic/UserLogic.js/GetUsers.logic";
-import UserList from "../../components/UserList";
+import { toast } from 'react-hot-toast';
+import { Databases, Teams } from 'appwrite';
+import client from '../../appwrite.config';
+import { useNavigate } from 'react-router-dom';
+import Loading from '../../components/Loading';
+import GetUsersLogic from '../../Logic/UserLogic.js/GetUsers.logic';
+import UserList from '../../components/UserList';
 
 function calculateLightness(rgb) {
   const r = rgb[0] / 255;
@@ -52,7 +48,6 @@ function compareLightness(color1, color2) {
 
 function Event() {
   const { loading, error, events, id } = GetEventLogic();
-  
 
   const {
     users,
@@ -63,8 +58,6 @@ function Event() {
 
   const [colors, setColors] = useState([]);
 
-  
-
   const navigate = useNavigate();
 
   const deleteEvent = async () => {
@@ -72,31 +65,31 @@ function Event() {
       const teams = new Teams(client);
       const database = new Databases(client);
       const teamResponse = await teams.delete(events?.teamId);
-      
+
       const response = await database.deleteDocument(
         process.env.REACT_APP_DATABASE_ID,
         process.env.REACT_APP_EVENTS_COLLECTION_ID,
         id
       );
-      toast.success("Event deleted successfully");
-      navigate("/dashboard/events?filter=total");
+      toast.success('Event deleted successfully');
+      navigate('/dashboard/events?filter=total');
     } catch (error) {
-      toast.error("Error deleting event");
+      toast.error('Error deleting event');
     }
   };
 
-  const copyTeamId = (e) => {
+  const copyTeamId = e => {
     e?.preventDefault();
     navigator.clipboard.writeText(events?.teamId);
-    toast.success("Invitation ID copied to clipboard");
+    toast.success('Invitation ID copied to clipboard');
   };
 
-  const deleteEventToast = (e) => {
+  const deleteEventToast = e => {
     e?.preventDefault();
-    toast.custom((t) => (
+    toast.custom(t => (
       <div
         className={`${
-          t.visible ? "animate-enter" : "animate-leave"
+          t.visible ? 'animate-enter' : 'animate-leave'
         } max-w-md w-full bg-white shadow-lg rounded-[18px] overflow-hidden pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
       >
         <div className="flex-1 w-0 p-4">
@@ -122,7 +115,7 @@ function Event() {
             Delete
           </button>
           <button
-            onClick={async (e) => {
+            onClick={async e => {
               e?.preventDefault();
               toast.dismiss(t.id);
             }}
@@ -136,27 +129,25 @@ function Event() {
   };
 
   useEffect(() => {
-    
-    const unsubscribe = client.subscribe(`teams.${events?.teamId}`, (response) => {
-      
-    });
+    const unsubscribe = client.subscribe(
+      `teams.${events?.teamId}`,
+      response => {}
+    );
     return () => unsubscribe();
-  },[]);
+  }, []);
 
   const { createMembership, teamMembers, memberCount } = CreateMembershipLogic(
     events?.teamId
   );
 
-  const checkMembership = (userId) => {
-    const member = teamMembers?.find((member) => member.userId === userId);
+  const checkMembership = userId => {
+    const member = teamMembers?.find(member => member.userId === userId);
     if (member) {
-      if (member.joined) return "Joined";
-      return "Pending";
+      if (member.joined) return 'Joined';
+      return 'Pending';
     }
-    return "Invite";
+    return 'Invite';
   };
-
-  
 
   if (loading) return <Loading />;
 
@@ -168,22 +159,23 @@ function Event() {
       <div
         className="w-full grid md:grid-cols-4 lg:grid-cols-5 gap-4"
         style={{
-          color: `rgb(${colors[5]?.join(",")})`,
+          color: `rgb(${colors[5]?.join(',')})`,
         }}
       >
         <section
           className={`py-4 ${
             showUsers
-              ? "md:col-span-3 lg:col-span-4"
-              : "md:col-span-4 lg:col-span-5"
+              ? 'md:col-span-3 lg:col-span-4'
+              : 'md:col-span-4 lg:col-span-5'
           } grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-all`}
         >
           <div className="relative h-full  lg:col-span-2">
             <div className="absolute top-4 left-4 inline-flex gap-2 flex-wrap">
               <Link
                 to={`/dashboard/create?id=${events?.$id}`}
-                className="shadow-md primary-btn group overflow-hidden transition-all" style={{
-                  background: `rgb(${colors[4]?.join(',')})`
+                className="shadow-md primary-btn group overflow-hidden transition-all"
+                style={{
+                  background: `rgb(${colors[4]?.join(',')})`,
                 }}
               >
                 <MdEdit />
@@ -193,8 +185,9 @@ function Event() {
               </Link>
               <button
                 onClick={deleteEventToast}
-                className="shadow-md primary-btn group overflow-hidden transition-all" style={{
-                  background: `rgb(${colors[4]?.join(',')})`
+                className="shadow-md primary-btn group overflow-hidden transition-all"
+                style={{
+                  background: `rgb(${colors[4]?.join(',')})`,
                 }}
               >
                 <MdDelete />
@@ -204,8 +197,9 @@ function Event() {
               </button>
               <button
                 onClick={copyTeamId}
-                className="shadow-md primary-btn group overflow-hidden transition-all" style={{
-                  background: `rgb(${colors[4]?.join(',')})`
+                className="shadow-md primary-btn group overflow-hidden transition-all"
+                style={{
+                  background: `rgb(${colors[4]?.join(',')})`,
                 }}
               >
                 <IoCopy />
@@ -215,8 +209,9 @@ function Event() {
               </button>
               <button
                 onClick={toggleShowUsers}
-                className="shadow-md primary-btn group overflow-hidden transition-all" style={{
-                  background: `rgb(${colors[4]?.join(',')})`
+                className="shadow-md primary-btn group overflow-hidden transition-all"
+                style={{
+                  background: `rgb(${colors[4]?.join(',')})`,
                 }}
               >
                 <IoPeopleOutline />
@@ -227,8 +222,8 @@ function Event() {
             </div>
             <ColorExtractor
               rgb
-              getColors={(colors) =>
-                setColors((prev) => colors?.sort(compareLightness))
+              getColors={colors =>
+                setColors(prev => colors?.sort(compareLightness))
               }
             >
               <img
@@ -242,16 +237,16 @@ function Event() {
           <div
             className="p-2 py-3 rounded-[18px] overflow-auto max-h-[65vh] space-y-4"
             style={{
-              backgroundColor: `rgb(${colors[4]?.join(",")})`,
+              backgroundColor: `rgb(${colors[4]?.join(',')})`,
             }}
           >
             <div
               className="p-4 flex flex-col gap-4"
               style={{
-                color: `rgb(${colors[0]?.join(",")})`,
+                color: `rgb(${colors[0]?.join(',')})`,
               }}
             >
-              {events?.medium === "offline" && (
+              {events?.medium === 'offline' && (
                 <>
                   <iframe
                     title="map"
@@ -263,36 +258,36 @@ function Event() {
                   </h2>
                 </>
               )}
-              {events?.medium === "online" && (
+              {events?.medium === 'online' && (
                 <h2 className="text-lg inline-flex items-center gap-2">
                   <MdComputer /> Online
                 </h2>
               )}
               <h2 className="text-lg inline-flex items-center gap-2">
-                <IoWalletOutline />{" "}
-                {events?.price > 0 ? `Rs. ${events?.price}` : "Free"}
+                <IoWalletOutline />{' '}
+                {events?.price > 0 ? `Rs. ${events?.price}` : 'Free'}
               </h2>
               <h2
                 onClick={toggleShowUsers}
                 className="text-lg inline-flex items-center gap-2 cursor-pointer"
               >
-                <IoPersonOutline />{" "}
+                <IoPersonOutline />{' '}
                 {memberCount - 1 > 0
                   ? `${memberCount - 1} Member(s)`
-                  : "No members"}
+                  : 'No members'}
               </h2>
               <h2 className="text-lg inline-flex items-center gap-2 cursor-pointer">
-                <IoPeopleOutline />{" "}
+                <IoPeopleOutline />{' '}
                 {events?.maxParticipants > 0
                   ? `Max Limit of ${events.maxParticipants} members`
-                  : "No max participation limit"}
+                  : 'No max participation limit'}
               </h2>
             </div>
           </div>
           <div
             className="col-span-3 p-4 rounded-[18px]"
             style={{
-              backgroundColor: `rgb(${colors[0]?.join(",")})`,
+              backgroundColor: `rgb(${colors[0]?.join(',')})`,
             }}
           >
             <h2 className="text-3xl font-bold">{events?.title}</h2>

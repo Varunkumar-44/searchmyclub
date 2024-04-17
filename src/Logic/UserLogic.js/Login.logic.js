@@ -1,14 +1,14 @@
-import { useState } from "react";
-import client from "../../appwrite.config";
-import { Account } from "appwrite";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import client from '../../appwrite.config';
+import { Account } from 'appwrite';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 function LoginLogic() {
   const [showPass, setShowPass] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [validateMessage, setValidateMessage] = useState(null);
   const [signingin, setSigningin] = useState(false);
 
@@ -16,25 +16,25 @@ function LoginLogic() {
 
   const inputs = [
     {
-      label: "Email",
-      placeholder: "example@email.com",
+      label: 'Email',
+      placeholder: 'example@email.com',
       value: email,
       cb: setEmail,
-      type: "email",
+      type: 'email',
     },
     {
-      label: "Password",
-      placeholder: "Please pick a strong password",
+      label: 'Password',
+      placeholder: 'Please pick a strong password',
       value: password,
       cb: setPassword,
-      inputMode: "text",
-      keyboard: "default",
-      type: !showPass ? "password" : "text",
+      inputMode: 'text',
+      keyboard: 'default',
+      type: !showPass ? 'password' : 'text',
       rightIcon: (
         <button
-          onClick={(e) => {
+          onClick={e => {
             e?.preventDefault();
-            setShowPass((prev) => !prev);
+            setShowPass(prev => !prev);
           }}
         >
           {showPass ? (
@@ -47,11 +47,10 @@ function LoginLogic() {
     },
   ];
 
-  const loginUser = async (e) => {
+  const loginUser = async e => {
     e?.preventDefault();
-    setSigningin((prev) => true);
-    setValidateMessage((prev) => null);
-    
+    setSigningin(prev => true);
+    setValidateMessage(prev => null);
 
     const account = new Account(client);
 
@@ -60,27 +59,26 @@ function LoginLogic() {
         email,
         password
       );
-      
-      localStorage.setItem("token", JSON.stringify(loggedInResponse));
-      toast.success("Logged in successfully");
+
+      localStorage.setItem('token', JSON.stringify(loggedInResponse));
+      toast.success('Logged in successfully');
       const accountDetails = await account.get();
-      
-      if (accountDetails.phoneVerification)
-        navigate("/", { replace: true });
+
+      if (accountDetails.phoneVerification) navigate('/', { replace: true });
       else if (
         accountDetails.phone.length === 0 ||
         accountDetails.phone === null ||
         accountDetails.phone === undefined
       )
-        navigate("/auth/phone", {
+        navigate('/auth/phone', {
           replace: true,
           state: { ...loggedInResponse, email, password },
         });
       else {
         const sendOTPResponse = await account.createPhoneVerification();
-        
-        toast.success("OTP sent to your phone.");
-        navigate("/auth/otp", {
+
+        toast.success('OTP sent to your phone.');
+        navigate('/auth/otp', {
           state: {
             ...sendOTPResponse,
             email,
@@ -91,11 +89,10 @@ function LoginLogic() {
         });
       }
     } catch (error) {
-      
-      setValidateMessage((prev) => error.message);
+      setValidateMessage(prev => error.message);
       toast.error(error.message);
     } finally {
-      setSigningin((prev) => false);
+      setSigningin(prev => false);
     }
   };
 

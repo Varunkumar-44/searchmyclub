@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect } from 'react';
 import {
   IoCalendarClearOutline,
   IoHomeOutline,
@@ -7,14 +7,14 @@ import {
   IoPeopleOutline,
   IoPersonOutline,
   IoTicketOutline,
-} from "react-icons/io5";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import LogoutLogic from "../Logic/UserLogic.js/Logout.logic";
-import client from "../appwrite.config";
-import { Account } from "appwrite";
-import { useNotifications } from "../context/notificationContext";
-import Brand from "./Brand";
-import { useUser } from "../context/userContext";
+} from 'react-icons/io5';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import LogoutLogic from '../Logic/UserLogic.js/Logout.logic';
+import client from '../appwrite.config';
+import { Account } from 'appwrite';
+import { useNotifications } from '../context/notificationContext';
+import Brand from './Brand';
+import { useUser } from '../context/userContext';
 
 function Sidebar() {
   const { logout } = LogoutLogic();
@@ -29,14 +29,14 @@ function Sidebar() {
     try {
       const account = new Account(client);
       const res = await account.get();
-      
-      localStorage.setItem("spotlight-user", JSON.stringify(res));
-      setUserInfo((prev) => res);
+
+      localStorage.setItem('spotlight-user', JSON.stringify(res));
+      setUserInfo(prev => res);
     } catch (err) {
       console.error(err);
-      localStorage.removeItem("spotlight-user");
-      localStorage.removeItem("token");
-      navigate("/");
+      localStorage.removeItem('spotlight-user');
+      localStorage.removeItem('token');
+      navigate('/');
     }
   }, []);
 
@@ -82,10 +82,10 @@ function Sidebar() {
         >
           {userInfo ? (
             <>
-              <IoPersonOutline /> {userInfo?.name?.split(" ")[0]}
+              <IoPersonOutline /> {userInfo?.name?.split(' ')[0]}
             </>
           ) : (
-            "Account"
+            'Account'
           )}
         </NavLink>
         <button className="sidebar-link" onClick={logout}>

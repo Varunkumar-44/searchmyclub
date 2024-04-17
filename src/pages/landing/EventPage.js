@@ -1,7 +1,7 @@
-import React from "react";
-import GetEventLogic from "../../Logic/EventsLogic/getEvents";
-import Loading from "../../components/Loading";
-import { MdComputer, MdCurrencyRupee } from "react-icons/md";
+import React from 'react';
+import GetEventLogic from '../../Logic/EventsLogic/getEvents';
+import Loading from '../../components/Loading';
+import { MdComputer, MdCurrencyRupee } from 'react-icons/md';
 import {
   IoBookmarkOutline,
   IoCalendarClearOutline,
@@ -9,16 +9,14 @@ import {
   IoLocationOutline,
   IoTimerOutline,
   IoWalletOutline,
-} from "react-icons/io5";
-import { shareLinks } from "../../static/shareLinks";
-import { useLocation } from "react-router-dom";
-import RsvpLogic from "../../Logic/Explore/rsvp.logic";
+} from 'react-icons/io5';
+import { shareLinks } from '../../static/shareLinks';
+import { useLocation } from 'react-router-dom';
+import RsvpLogic from '../../Logic/Explore/rsvp.logic';
 
 function EventPage() {
   const { loading, error, events } = GetEventLogic();
-  const { handleRSVP, adding } =
-    RsvpLogic(events);
-  
+  const { handleRSVP, adding } = RsvpLogic(events);
 
   const { pathname } = useLocation();
 
@@ -42,14 +40,12 @@ function EventPage() {
     duration,
   } = events;
 
-  const start = startDate ? new Date(startDate?.split("+")[0]) : null;
-  const end = endDate ? new Date(endDate?.split("+")[0]) : null;
+  const start = startDate ? new Date(startDate?.split('+')[0]) : null;
+  const end = endDate ? new Date(endDate?.split('+')[0]) : null;
   const startDay = start?.toDateString();
   const endDay = end?.toDateString();
   const startTime = start?.toTimeString()?.slice(0, 5);
   const endTime = end?.toTimeString()?.slice(0, 5);
-
-  
 
   const RSVPBtn = () => (
     <button
@@ -57,7 +53,7 @@ function EventPage() {
       onClick={handleRSVP}
       className={`primary-btn disabled:opacity-60`}
     >
-      {price <= 0 ? "RSVP" : "BUY NOW"}
+      {price <= 0 ? 'RSVP' : 'BUY NOW'}
     </button>
   );
 
@@ -78,7 +74,7 @@ function EventPage() {
               </h2>
               {duration?.length > 0 && (
                 <h2 className="inline-flex items-center gap-2 text-sm">
-                  <IoTimerOutline /> {duration.split(":").join("h ")}m
+                  <IoTimerOutline /> {duration.split(':').join('h ')}m
                 </h2>
               )}
               {language?.length > 0 && (
@@ -99,7 +95,7 @@ function EventPage() {
                 </h2>
               )}
               <h2 className="inline-flex flex-wrap items-center gap-2 text-sm">
-                {medium === "offline" ? (
+                {medium === 'offline' ? (
                   <>
                     <IoLocationOutline />
                     <span className="flex-1">{location[0]}</span>
@@ -112,15 +108,15 @@ function EventPage() {
                 ) : (
                   <>
                     <MdComputer />
-                    {meet[0] || "Online"}
+                    {meet[0] || 'Online'}
                   </>
                 )}
               </h2>
               <div className="inline-flex items-center justify-between w-full">
                 <h2 className="inline-flex items-center gap-2 font-extrabold font-grostek text-xl mt-2">
-                  <IoWalletOutline />{" "}
+                  <IoWalletOutline />{' '}
                   {price <= 0 ? (
-                    "Free"
+                    'Free'
                   ) : (
                     <>
                       <MdCurrencyRupee />
@@ -166,7 +162,7 @@ function EventPage() {
                 Terms and Conditions
               </h2>
               <ul className="display-linebreak text-neutral-800 text-sm font-grostek list-disc">
-                {tnc?.split("\n")?.map((t) => (
+                {tnc?.split('\n')?.map(t => (
                   <li>{t}</li>
                 ))}
               </ul>
@@ -181,7 +177,7 @@ function EventPage() {
             </h2>
             {duration?.length > 0 && (
               <h2 className="inline-flex items-center gap-2 text-sm">
-                <IoTimerOutline /> {duration.split(":").join("h ")}m
+                <IoTimerOutline /> {duration.split(':').join('h ')}m
               </h2>
             )}
             {language?.length > 0 && (
@@ -199,7 +195,7 @@ function EventPage() {
               </h2>
             )}
             <h2 className="inline-flex flex-wrap items-center gap-2 text-sm">
-              {medium === "offline" ? (
+              {medium === 'offline' ? (
                 <>
                   <IoLocationOutline />
                   <span className="flex-1">{location[0]}</span>
@@ -212,15 +208,15 @@ function EventPage() {
               ) : (
                 <>
                   <MdComputer />
-                  {meet[0] || "Online"}
+                  {meet[0] || 'Online'}
                 </>
               )}
             </h2>
             <div className="inline-flex items-center justify-between w-full">
               <h2 className="inline-flex items-center gap-2 font-extrabold font-grostek text-xl mt-2">
-                <IoWalletOutline />{" "}
+                <IoWalletOutline />{' '}
                 {price <= 0 ? (
-                  "Free"
+                  'Free'
                 ) : (
                   <>
                     <MdCurrencyRupee />

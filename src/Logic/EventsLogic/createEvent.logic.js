@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import client from "../../appwrite.config";
-import { Databases, Storage, ID, Teams } from "appwrite";
-import { categories } from "./categories";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
-import { useSearchParams } from "react-router-dom";
+import { useState, useEffect, useRef, useCallback } from 'react';
+import client from '../../appwrite.config';
+import { Databases, Storage, ID, Teams } from 'appwrite';
+import { categories } from './categories';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { useSearchParams } from 'react-router-dom';
 
 function CreateEventLogic() {
   const [validateMessage, setValidateMessage] = useState(null);
@@ -12,32 +12,30 @@ function CreateEventLogic() {
 
   const [searchParams] = useSearchParams();
 
-  const id = searchParams.get("id");
-
-  
+  const id = searchParams.get('id');
 
   const navigate = useNavigate();
 
   const fileRef = useRef(null);
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [location, setLocation] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [duration, setDuration] = useState(null);
   const [language, setLanguage] = useState(null);
   const [maxParticipants, setMaxParticipants] = useState(null);
-  const [category, setCategory] = useState("");
-  const [medium, setMedium] = useState("offline");
-  const [meetLink, setMeetLink] = useState("");
-  const [meetId, setMeetId] = useState("");
-  const [meetPassword, setMeetPassword] = useState("");
-  const [privacy, setPrivacy] = useState("public");
+  const [category, setCategory] = useState('');
+  const [medium, setMedium] = useState('offline');
+  const [meetLink, setMeetLink] = useState('');
+  const [meetId, setMeetId] = useState('');
+  const [meetPassword, setMeetPassword] = useState('');
+  const [privacy, setPrivacy] = useState('public');
   const [image, setImage] = useState(null);
-  const [imageError, setImageError] = useState("");
+  const [imageError, setImageError] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [fetchedDoc, setFetchedDoc] = useState(null);
   const [fetchingDoc, setFetchingDoc] = useState(false);
@@ -46,24 +44,24 @@ function CreateEventLogic() {
   const [acceptingAttendance, setAcceptingAttendance] = useState(false);
   const [acceptingRsvp, setAcceptingRsvp] = useState(false);
 
-  const handleImage = (e) => {
+  const handleImage = e => {
     if (e.target.files[0]) {
       setImage(e.target.files[0]);
-      setImageError("");
+      setImageError('');
       setImagePreview(URL.createObjectURL(e.target.files[0]));
     }
   };
 
   const getEventById = useCallback(async () => {
     try {
-      setFetchingDoc((prev) => true);
+      setFetchingDoc(prev => true);
       const database = new Databases(client);
       const response = await database.getDocument(
         process.env.REACT_APP_DATABASE_ID,
         process.env.REACT_APP_EVENTS_COLLECTION_ID,
         id
       );
-      
+
       const {
         title,
         description,
@@ -81,35 +79,35 @@ function CreateEventLogic() {
         language,
         tnc,
         acceptingAttendance,
-        acceptingRsvp
+        acceptingRsvp,
       } = response;
-      setFetchedDoc((prev) => response);
-      setTitle((prev) => title);
-      setDescription((prev) => description);
-      setLocation((prev) => location[0]);
-      setLatitude((prev) => location[1]);
-      setLongitude((prev) => location[2]);
-      setStartDate((prev) => startDate?.split("+")[0]);
-      setEndDate((prev) => endDate?.split("+")[0]);
-      setDuration((prev) => duration);
-      setLanguage((prev) => language);
-      setMaxParticipants((prev) => maxParticipants);
-      setCategory((prev) => category);
-      setMedium((prev) => medium);
-      setMeetLink((prev) => meet[0]);
-      setMeetId((prev) => meet[1]);
-      setMeetPassword((prev) => meet[2]);
-      setPrivacy((prev) => privacy);
-      setImage((prev) => image);
-      setImagePreview((prev) => image);
-      setImageId((prev) => imageId);
-      setTnc((prev) => tnc);
-      setAcceptingAttendance((prev) => acceptingAttendance);
-      setAcceptingRsvp((prev) => acceptingRsvp);
+      setFetchedDoc(prev => response);
+      setTitle(prev => title);
+      setDescription(prev => description);
+      setLocation(prev => location[0]);
+      setLatitude(prev => location[1]);
+      setLongitude(prev => location[2]);
+      setStartDate(prev => startDate?.split('+')[0]);
+      setEndDate(prev => endDate?.split('+')[0]);
+      setDuration(prev => duration);
+      setLanguage(prev => language);
+      setMaxParticipants(prev => maxParticipants);
+      setCategory(prev => category);
+      setMedium(prev => medium);
+      setMeetLink(prev => meet[0]);
+      setMeetId(prev => meet[1]);
+      setMeetPassword(prev => meet[2]);
+      setPrivacy(prev => privacy);
+      setImage(prev => image);
+      setImagePreview(prev => image);
+      setImageId(prev => imageId);
+      setTnc(prev => tnc);
+      setAcceptingAttendance(prev => acceptingAttendance);
+      setAcceptingRsvp(prev => acceptingRsvp);
     } catch (err) {
       toast.error(err.message);
     } finally {
-      setFetchingDoc((prev) => false);
+      setFetchingDoc(prev => false);
     }
   }, [id]);
 
@@ -117,15 +115,15 @@ function CreateEventLogic() {
     if (id) getEventById();
   }, [getEventById]);
 
-  const getUpdatedValues = (value) => {
+  const getUpdatedValues = value => {
     const updatedObj = {};
     if (value.title !== fetchedDoc?.title) {
       updatedObj.title = title;
     }
-    if(value?.acceptingAttendance !== fetchedDoc?.acceptingAttendance) {
+    if (value?.acceptingAttendance !== fetchedDoc?.acceptingAttendance) {
       updatedObj.acceptingAttendance = acceptingAttendance;
     }
-    if(value?.acceptingRsvp !== fetchedDoc?.acceptingRsvp) {
+    if (value?.acceptingRsvp !== fetchedDoc?.acceptingRsvp) {
       updatedObj.acceptingRsvp = acceptingRsvp;
     }
     if (value.tnc !== fetchedDoc?.tnc) {
@@ -136,23 +134,23 @@ function CreateEventLogic() {
     }
     if (
       new Date(value.startDate).toUTCString() !==
-      new Date(fetchedDoc?.startDate?.split("+")[0]).toUTCString()
+      new Date(fetchedDoc?.startDate?.split('+')[0]).toUTCString()
     ) {
       updatedObj.startDate = startDate.length > 0 ? startDate : null;
     }
     if (
       new Date(value.endDate).toUTCString() !==
-      new Date(fetchedDoc?.endDate?.split("+")[0]).toUTCString()
+      new Date(fetchedDoc?.endDate?.split('+')[0]).toUTCString()
     ) {
       updatedObj.endDate = endDate?.length > 0 ? endDate : null;
     }
     if (value?.maxParticipants !== fetchedDoc?.maxParticipants) {
       updatedObj.maxParticipants = maxParticipants;
     }
-    if(value?.duration !== fetchedDoc?.duration) {
+    if (value?.duration !== fetchedDoc?.duration) {
       updatedObj.duration = duration;
     }
-    if(value?.language !== fetchedDoc?.language) {
+    if (value?.language !== fetchedDoc?.language) {
       updatedObj.language = language;
     }
     if (value.category !== fetchedDoc?.category) {
@@ -173,42 +171,42 @@ function CreateEventLogic() {
     return updatedObj;
   };
 
-  const handleCreateEvent = async (e) => {
+  const handleCreateEvent = async e => {
     e?.preventDefault();
-    const token = JSON.parse(localStorage.getItem("token"));
-    
-    setSigningin((prev) => true);
-    setValidateMessage((prev) => null);
+    const token = JSON.parse(localStorage.getItem('token'));
+
+    setSigningin(prev => true);
+    setValidateMessage(prev => null);
     try {
       if (!title) {
-        throw new Error("Please provide a title for your event.");
+        throw new Error('Please provide a title for your event.');
       }
       if (!description) {
-        throw new Error("Please provide a description for your event.");
+        throw new Error('Please provide a description for your event.');
       }
       if (!privacy) {
-        throw new Error("Please provide a privacy for your event.");
+        throw new Error('Please provide a privacy for your event.');
       }
       if (!startDate) {
-        throw new Error("Please provide a start date for your event.");
+        throw new Error('Please provide a start date for your event.');
       }
       if (endDate) {
         if (new Date(endDate) < new Date(startDate)) {
-          throw new Error("End date cannot be before start date.");
+          throw new Error('End date cannot be before start date.');
         }
       }
       if (!category) {
-        throw new Error("Please provide a category for your event.");
+        throw new Error('Please provide a category for your event.');
       }
-      if (medium === "offline") {
+      if (medium === 'offline') {
         if (!location) {
-          throw new Error("Please provide a location for your event.");
+          throw new Error('Please provide a location for your event.');
         }
         if (!latitude) {
-          throw new Error("Please provide a latitude for your event.");
+          throw new Error('Please provide a latitude for your event.');
         }
         if (!longitude) {
-          throw new Error("Please provide a longitude for your event.");
+          throw new Error('Please provide a longitude for your event.');
         }
       }
       // if (medium === "online") {
@@ -220,36 +218,34 @@ function CreateEventLogic() {
       //   }
       // }
       if (image === null) {
-        throw new Error("Please provide an image for your event.");
+        throw new Error('Please provide an image for your event.');
       }
       try {
         let uploadedFile, filePreviewUrl;
         const storage = new Storage(client);
-        if (typeof image !== "string") {
+        if (typeof image !== 'string') {
           if (fetchedDoc?.imageId) {
             const deletedFile = await storage.deleteFile(
               process.env.REACT_APP_IMAGES_BUCKET_ID,
               fetchedDoc?.imageId
             );
-            
           }
           uploadedFile = await storage.createFile(
             process.env.REACT_APP_IMAGES_BUCKET_ID,
             ID.unique(),
             image
           );
-          
+
           filePreviewUrl = await storage.getFilePreview(
             uploadedFile.bucketId,
             uploadedFile.$id
           );
-          
         } else if (image === null) {
           const deletedFile = await storage.deleteFile(
             process.env.REACT_APP_IMAGES_BUCKET_ID,
             fetchedDoc?.imageId
           );
-          
+
           filePreviewUrl = null;
         } else {
           filePreviewUrl = image;
@@ -261,13 +257,14 @@ function CreateEventLogic() {
           startDate,
           endDate,
           category,
-          maxParticipants: String(maxParticipants).length === 0 ? 0 : maxParticipants,
+          maxParticipants:
+            String(maxParticipants).length === 0 ? 0 : maxParticipants,
           location:
-            medium === "online"
+            medium === 'online'
               ? []
               : [String(location), String(latitude), String(longitude)],
           meet:
-            medium === "offline"
+            medium === 'offline'
               ? []
               : [String(meetLink), String(meetId), String(meetPassword)],
           privacy,
@@ -278,16 +275,16 @@ function CreateEventLogic() {
           acceptingAttendance,
           duration,
           language,
-          acceptingRsvp
+          acceptingRsvp,
         };
         const updatedValues = id ? getUpdatedValues(value) : value;
-        
+
         const databases = new Databases(client);
         const teams = new Teams(client);
         let teamId;
-        if (id === undefined || id === null || id === "" || !id) {
+        if (id === undefined || id === null || id === '' || !id) {
           const teamResponse = await teams.create(ID.unique(), title);
-          
+
           teamId = teamResponse.$id;
         }
         const response = id
@@ -303,190 +300,187 @@ function CreateEventLogic() {
               ID.unique(),
               { ...value, teamId }
             );
-        
-        if(title !== fetchedDoc?.title) {
+
+        if (title !== fetchedDoc?.title) {
           const teamNameUpdate = await teams.updateName(teamId, title);
-          
         }
         // const updateTeamPreferences = await teams.updatePrefs( teamId, {...fetchedDoc?, ...response } )
-        // 
-        toast.success(`Event ${id ? "updated" : "created"} successfully`);
+        //
+        toast.success(`Event ${id ? 'updated' : 'created'} successfully`);
         navigate(-1);
       } catch (error) {
-        
-        setValidateMessage((prev) => error.message);
+        setValidateMessage(prev => error.message);
         toast.error(error.message);
       }
     } catch (err) {
-      
       toast.error(err.message);
     } finally {
-      setSigningin((prev) => false);
+      setSigningin(prev => false);
     }
   };
 
   const inputs = [
     {
-      label: "Title",
-      placeholder: "Please provide a title for your event.",
+      label: 'Title',
+      placeholder: 'Please provide a title for your event.',
       value: title,
       cb: setTitle,
       show: true,
       required: true,
     },
     {
-      label: "Description",
+      label: 'Description',
       value: description,
-      placeholder: "Please provide a description of your event.",
+      placeholder: 'Please provide a description of your event.',
       cb: setDescription,
       multiline: true,
       show: true,
       required: true,
-      type: "textarea",
+      type: 'textarea',
     },
     {
-      label: "Privacy",
+      label: 'Privacy',
       value: privacy,
-      placeholder: "Please provide a medium for your event.",
+      placeholder: 'Please provide a medium for your event.',
       cb: setPrivacy,
       options: [
         {
-          label: "Public",
-          value: "public",
+          label: 'Public',
+          value: 'public',
         },
         {
-          label: "Private",
-          value: "private",
+          label: 'Private',
+          value: 'private',
         },
       ],
       show: true,
       required: true,
     },
     {
-      label: "Medium",
+      label: 'Medium',
       value: medium,
-      placeholder: "Please provide a medium for your event.",
+      placeholder: 'Please provide a medium for your event.',
       cb: setMedium,
       options: [
         {
-          label: "Online",
-          value: "online",
+          label: 'Online',
+          value: 'online',
         },
         {
-          label: "In Person",
-          value: "offline",
+          label: 'In Person',
+          value: 'offline',
         },
       ],
       show: true,
       required: true,
     },
     {
-      label: "Start Date-Time",
+      label: 'Start Date-Time',
       value: startDate,
-      placeholder: "Please provide a start date for your event.",
+      placeholder: 'Please provide a start date for your event.',
       cb: setStartDate,
       show: true,
       required: true,
-      type: "datetime-local",
+      type: 'datetime-local',
     },
     {
-      label: "End Date-Time",
+      label: 'End Date-Time',
       value: endDate,
-      placeholder: "Please provide an end date for your event.",
+      placeholder: 'Please provide an end date for your event.',
       cb: setEndDate,
       show: true,
-      type: "datetime-local",
+      type: 'datetime-local',
     },
     {
-      label: "Duration",
+      label: 'Duration',
       value: duration,
-      placeholder: "Please provide a duration for your event. (hh:mm)",
+      placeholder: 'Please provide a duration for your event. (hh:mm)',
       cb: setDuration,
       show: true,
-      type: "string",
+      type: 'string',
     },
     {
-      label: "Language",
+      label: 'Language',
       value: language,
-      placeholder: "Please provide a language for your event.",
+      placeholder: 'Please provide a language for your event.',
       cb: setLanguage,
       show: true,
-      type: "string",
+      type: 'string',
     },
     {
-      label: "Max Participants (i.e. RSVPs)",
+      label: 'Max Participants (i.e. RSVPs)',
       value: maxParticipants,
       placeholder:
-        "Please provide a maximum number of participants for your event.",
+        'Please provide a maximum number of participants for your event.',
       cb: setMaxParticipants,
-      type: "number",
+      type: 'number',
       show: true,
     },
     {
-      label: "Category",
+      label: 'Category',
       value: category,
-      placeholder: "Please provide a category for your event.",
+      placeholder: 'Please provide a category for your event.',
       cb: setCategory,
       show: true,
       options: categories,
       required: true,
     },
     {
-      label: "Terms and Conditions",
+      label: 'Terms and Conditions',
       value: tnc,
-      placeholder: "Please provide terms and conditions for your event.",
+      placeholder: 'Please provide terms and conditions for your event.',
       cb: setTnc,
       multiline: true,
       show: true,
-      type: "textarea",
+      type: 'textarea',
     },
     {
-      label: "Location Name",
+      label: 'Location Name',
       value: location,
-      placeholder: "Please provide a location for your event.",
+      placeholder: 'Please provide a location for your event.',
       cb: setLocation,
-      show: medium === "offline",
-      required: medium === "offline",
+      show: medium === 'offline',
+      required: medium === 'offline',
     },
     {
-      label: "Latitude",
+      label: 'Latitude',
       value: latitude,
-      placeholder: "Please provide a latitude for your event.",
+      placeholder: 'Please provide a latitude for your event.',
       cb: setLatitude,
-      inputMode: "numeric",
-      show: medium === "offline",
-      required: medium === "offline",
+      inputMode: 'numeric',
+      show: medium === 'offline',
+      required: medium === 'offline',
     },
     {
-      label: "Longitude",
+      label: 'Longitude',
       value: longitude,
-      placeholder: "Please provide a longitude for your event.",
+      placeholder: 'Please provide a longitude for your event.',
       cb: setLongitude,
-      inputMode: "numeric",
-      show: medium === "offline",
-      required: medium === "offline",
+      inputMode: 'numeric',
+      show: medium === 'offline',
+      required: medium === 'offline',
     },
     {
-      label: "Meet Link",
+      label: 'Meet Link',
       value: meetLink,
-      placeholder: "Please provide a meet link for your event.",
+      placeholder: 'Please provide a meet link for your event.',
       cb: setMeetLink,
-      type: "url",
-      show: medium === "online",
+      type: 'url',
+      show: medium === 'online',
     },
     {
-      label: "Meet ID",
+      label: 'Meet ID',
       value: meetId,
-      placeholder: "Please provide a meet ID for your event.",
+      placeholder: 'Please provide a meet ID for your event.',
       cb: setMeetId,
-      show: medium === "online",
+      show: medium === 'online',
     },
     {
-      label: "Meet Password",
+      label: 'Meet Password',
       value: meetPassword,
-      placeholder: "Please provide a meet password for your event.",
+      placeholder: 'Please provide a meet password for your event.',
       cb: setMeetPassword,
-      show: medium === "online",
+      show: medium === 'online',
     },
     // {
     //   label: "Accepting Attendances",
@@ -506,28 +500,28 @@ function CreateEventLogic() {
     //   ],
     // },
     {
-      label: "Accepting RSVPs",
+      label: 'Accepting RSVPs',
       value: acceptingRsvp,
       // placeholder: "Please provide a meet password for your event.",
       cb: setAcceptingRsvp,
       show: true,
       options: [
         {
-          label: "Yes",
+          label: 'Yes',
           value: true,
         },
         {
-          label: "No",
+          label: 'No',
           value: false,
         },
       ],
-    }
+    },
   ];
 
-  const removeImage = (e) => {
+  const removeImage = e => {
     e?.preventDefault();
-    setImagePreview((prev) => null);
-    setImage((prev) => null);
+    setImagePreview(prev => null);
+    setImage(prev => null);
   };
 
   return {
