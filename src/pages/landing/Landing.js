@@ -82,7 +82,8 @@ function Landing() {
 
   return (
     <div className="flex-1 bg-white font-poppins select-none">
-      <div className="bg-secondary">
+      <div className="bg-secondary relative">
+        <div className="absolute inset-0 bg-opacity-50 backdrop-filter backdrop-blur-sm"></div>
         <section className="flex flex-col text-center w-full items-center py-8 lg:py-16 justify-center gap-8 md:gap-0 container min-h-[75vh] relative">
           <div
             className="flex flex-col gap-4 items-center justify-center z-10"
