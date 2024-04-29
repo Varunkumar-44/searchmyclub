@@ -61,8 +61,16 @@ export default function RsvpLogic(event) {
   };
 
   const approveRsvp = async user => {
-    const { teamId, userId, name, email, documentId, eventName, eventId } =
-      user;
+    const {
+      teamId,
+      userId,
+      name,
+      phone,
+      email,
+      documentId,
+      eventName,
+      eventId,
+    } = user;
     try {
       const teams = new Teams(client);
       const res = await teams.createMembership(
@@ -71,7 +79,7 @@ export default function RsvpLogic(event) {
         `${process.env.REACT_APP_WEBSITE_URL}/accept-invite/${eventId}`,
         email,
         userId,
-        '',
+        phone,
         name
       );
 

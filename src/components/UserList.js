@@ -90,6 +90,7 @@ function UserList({
           teamId: events?.teamId,
           userId: user.userId,
           name: user.name,
+          phone: user.phone,
           email: user.email,
           role,
         });

@@ -11,6 +11,7 @@ export default function CreateMembershipLogic(teamId) {
     teamId,
     userId,
     name,
+    phone,
     email,
     role,
   }) {
@@ -24,7 +25,7 @@ export default function CreateMembershipLogic(teamId) {
       `${process.env.REACT_APP_WEBSITE_URL}/accept-invite/${eventId}`,
       email,
       userId,
-      '',
+      phone,
       name
     );
 
