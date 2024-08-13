@@ -11,14 +11,14 @@ import UserProvider from './context/userContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ErrorBoundary fallback={<Error />}>
-      <ThemeProvider>
-        <UserProvider>
-          <NotificationProvider>
-            <App />
-          </NotificationProvider>
-        </UserProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+    {/* <ErrorBoundary fallback={<Error />}> */}
+    <ThemeProvider>
+      <UserProvider>
+        <NotificationProvider>
+          <App />
+        </NotificationProvider>
+      </UserProvider>
+    </ThemeProvider>
+    {/* </ErrorBoundary> */}
   </React.StrictMode>
 );

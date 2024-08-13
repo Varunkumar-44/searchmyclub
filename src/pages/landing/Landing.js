@@ -10,6 +10,8 @@ import Testimonial from '../../components/TestimonialCard';
 import Hero from '../../assets/images/pattern1.jpg';
 import { Navigation, Autoplay, Pagination } from 'swiper';
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
+import background from '../../../src/assets/images/background.png';
+
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -82,42 +84,59 @@ function Landing() {
 
   return (
     <div className="flex-1 bg-white font-poppins select-none">
-      <div className="bg-secondary relative">
-        <div className="absolute inset-0 bg-opacity-50 backdrop-filter backdrop-blur-sm"></div>
-        <section className="flex flex-col text-center w-full items-center py-8 lg:py-16 justify-center gap-8 md:gap-0 container min-h-[75vh] relative">
-          <div
-            className="flex flex-col gap-4 items-center justify-center z-10"
-            style={{ flexBasis: '50%' }}
-          >
-            <h1 className=" text-xl md:text-4xl lg:text-6xl text-slate-100 font-bold leading-relaxed lg:leading-normal drop-shadow-2xl">
-              Ignite Your Creativity
-              <br />
-              Design Unforgettable Gatherings
-            </h1>
-            <p className=" md:max-w-[90%] py-2 text-lg text-slate-400">with</p>
-            <h1 className=" text-2xl md:text-4xl lg:text-6xl text-slate-100 font-bold leading-relaxed lg:leading-normal drop-shadow-2xl">
-              SearchMyClub
-            </h1>
-            <p className=" md:max-w-[90%] py-4 text-slate-400">
-              Effortless RSVP and Coordination for Creators
-            </p>
-            <div className="inline-flex items-center gap-2">
-              <Link
-                to={token ? '/dashboard' : '/auth/signup'}
-                className="bg-gradient-to-b shadow-xl focus:ring-accent from-accent to-accent/90 rounded-full p-4 text-white text-center"
-              >
-                {token ? 'Go to Dashboard' : 'Get Started'}
-              </Link>
-              <Link
-                to={'/explore'}
-                className="bg-gradient-to-r shadow-xl from-primary to-primary/90 rounded-full p-4 text-white text-center"
-              >
-                Explore Events
-              </Link>
+      <div
+        className="bg-{background} relative md:h-[calc(100vh-6rem)] flex items-center justify-center"
+        style={{
+          backgroundImage: `url(${background})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="container mx-auto flex flex-col justify-center items-center -my-6">
+          <section className="flex flex-col md:flex-row items-center justify-center">
+            <div className="md:w-3/5 text-left flex flex-col">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl text-white font-bold leading-normal">
+                IGNITE YOUR CREATIVITY, DESIGN
+              </h1>
+              <span>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl rounded-xl px-2 my-2 text-secondary bg-white font-bold leading-normal w-fit">
+                  UNFORGETTABLE
+                </h1>
+              </span>
+              <span>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl text-white font-bold leading-normal mb-6">
+                  GATHERINGS
+                </h1>
+              </span>
+              <p className="text-lg text-white mb-8">
+                Discover the free Order Time Inventory tool! Seamlessly sync
+                with QuickBooks, optimizing inventory control and marketplace
+                links for smoother business expansion.
+              </p>
+              <div className="flex space-x-4">
+                <Link
+                  to={token ? '/dashboard' : '/auth/signup'}
+                  className="bg-white rounded-xl p-4 text-secondary text-center font-semibold"
+                >
+                  {token ? 'Go to Dashboard' : 'Get Started'}
+                </Link>
+                <Link
+                  to={'/explore'}
+                  className="bg-none rounded-xl p-4 text-white text-center border-2 border-white font-semibold"
+                >
+                  Explore Events
+                </Link>
+              </div>
             </div>
-          </div>
-          <div className=" w-full relative"></div>
-        </section>
+            <div className="md:w-2/5 mt-12 md:mt-0 flex">
+              <img
+                src={Hero2}
+                alt="Enterprise Software"
+                className="w-full h-auto rounded-xl"
+              />
+            </div>
+          </section>
+        </div>
       </div>
       <section className="flex flex-col-reverse  lg:flex-row w-full py-8 md:py-16 justify-between gap-8 md:gap-0 container">
         <div className="md:pt-16 " style={{ flexBasis: '50%' }}>
@@ -130,11 +149,15 @@ function Landing() {
           <p className="text-accent tracking-[1px] font-semibold items-center gap-2 flex">
             <hr className="w-20 h-1 bg-accent"></hr>
           </p>
-          <h1 className="text-3xl md:text-5xl text-primary font-semibold md:leading-normal">
-            Unlock Your Creative Drive
-          </h1>
+          <div className="text-3xl md:text-5xl text-primary font-bold md:leading-normal tracking-wide">
+            <h1>UNLOCK YOUR </h1>
+            <h1 className=" bg-secondary rounded-xl px-2 inline-flex text-white">
+              CREATIVE
+            </h1>
+            <h1 className="inline-flex">DRIVE</h1>
+          </div>
           <hr className="w-full border border-neutral-200"></hr>
-          <p className="text-sm leading-[1.4rem] md:max-w-[90%] py-4 text-neutral-500 text-justify">
+          <p className="text-md leading-relaxed md:max-w-[90%] py-4 text-black text-justify">
             Our platform empowers individual creators and artists like you to
             unleash your imagination and orchestrate unforgettable gatherings.
             Whether you're organizing a solo showcase, a live performance, or a
@@ -143,25 +166,33 @@ function Landing() {
           </p>
           <Link
             to={token ? 'Go to Dashboard' : '/auth/signup'}
-            className="bg-accent rounded-full p-4 text-white text-center"
+            className="bg-secondary rounded-xl p-4 text-white text-center"
           >
             {token ? 'Go to Dashboard' : 'Get Started'}
           </Link>
         </div>
       </section>
-      <div className="bg-gradient-to-b from-secondary from-100% to-50% to-white pb-10">
+      <div className="pb-10">
         <section className="flex flex-col lg:flex-row w-full items-center py-8 lg:pt-16 lg:pb-0 justify-between gap-4 md:gap-0 container">
           <div className="flex flex-row gap-16">
             <div className="flex-[80%] space-y-4">
               <p className="text-accent tracking-[1px] font-semibold  items-center gap-2 flex">
-                <div className="w-20 h-1 bg-accent"></div> Secure
+                <div className="w-20 h-1 bg-accent"></div> SECURE
               </p>
-              <h1 className="text-3xl md:text-5xl text-white font-semibold md:leading-normal">
-                Effortless Event Planning and Coordination
-              </h1>
+              <div className="text-3xl md:text-5xl text-black font-semibold md:leading-normal tracking-wide">
+                <h1>
+                  EFFORTLESS EVENT
+                  <span className="inline-flex">
+                    <span className="bg-secondary rounded-xl px-2 text-white">
+                      PLANNING
+                    </span>
+                  </span>
+                  AND COORDINATION
+                </h1>
+              </div>
             </div>
           </div>
-          <p className="flex-[80%] w-full text-sm leading-[1.4rem] md:max-w-[90%] py-4 text-white text-justify">
+          <p className="flex-[80%] w-full text-md leading-relaxed md:max-w-[90%] py-4 text-black text-justify">
             Bid farewell to the complexities of event organization. Our
             intuitive interface simplifies the process, enabling you to
             concentrate on your artistic pursuits. Seamlessly create and oversee
@@ -186,13 +217,16 @@ function Landing() {
           style={{ flexBasis: '50%' }}
         >
           <p className="text-accent tracking-[1px] font-semibold items-center gap-2 flex">
-            <hr className="w-20 h-1 bg-accent"></hr> Registrations Made Easy
+            <hr className="w-20 h-1 bg-accent"></hr> REGISTRATIONS MADE EASY
           </p>
-          <h1 className="text-3xl md:text-5xl text-primary font-semibold md:leading-normal">
-            Safety and Dependability
-          </h1>
+          <div className="text-3xl md:text-5xl text-primary font-semibold md:leading-normal tracking-wide">
+            <h1 className="inline-flex">SAFETY AND </h1>
+            <h1 className="inline-flex bg-secondary rounded-xl px-2 text-white">
+              DEPENDABILITY
+            </h1>
+          </div>
           <hr className="w-full border border-neutral-200"></hr>
-          <p className="text-sm leading-[1.4rem] md:max-w-[90%] py-4 text-neutral-500 text-justify">
+          <p className="text-md leading-relaxed md:max-w-[90%] py-4 text-black text-justify">
             Rest assured that your event information is safeguarded with our web
             application. We prioritize data security and implement
             industry-standard measures to protect your data. Our robust
@@ -201,7 +235,7 @@ function Landing() {
           </p>
           <Link
             to={token ? '/dashboard' : '/auth/signup'}
-            className="bg-gradient-to-r from-primary to-primary rounded-full px-6 p-4 text-white text-center"
+            className="bg-secondary rounded-xl px-6 p-4 text-white text-center"
           >
             {token ? 'Go to Dashboard' : 'Get Started'}
           </Link>
