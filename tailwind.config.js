@@ -24,12 +24,16 @@ module.exports = {
       colors: {
         primary: '#000',
         accent: 'rgb(50,192,239)',
-        secondary: '#2563eb',
+        secondary: '#001352',
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-sarif'],
         grostek: ['Space Grotesk', 'sans-sarif'],
         dmsans: ['DM Sans', 'sans-sarif'],
+      },
+      backgroundImage: {
+        'custom-gradient':
+          'linear-gradient(130deg, rgba(0, 94, 255, 0.7) 0%, rgba(0, 112, 255, 0.7) 50%, rgba(0, 150, 255, 0.7) 100%)',
       },
     },
   },
