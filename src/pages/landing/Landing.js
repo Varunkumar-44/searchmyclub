@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-
+import React, { Suspense } from 'react';
 import Marketing from '../../assets/images/marketing.png';
 import Research from '../../assets/images/research.png';
 import Development from '../../assets/images/dev.png';
@@ -34,42 +34,62 @@ import { RiMouseLine, RiSteamLine } from 'react-icons/ri';
 import Hero2 from '../../assets/images/3187910.jpg';
 import Security from '../../assets/images/security.jpg';
 import { InfiniteMovingCards } from './InfiniteCards';
+import People from '../../assets/images/people.png';
+import { motion } from 'framer-motion';
+import SliderClubs from '../../components/SliderClubs';
+
+// Typewriter animation for the main text
+const typewriterVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      delay: 0.3,
+      staggerChildren: 0.05,
+    },
+  },
+};
+
+const letterVariant = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0 },
+};
 
 const data = [
   {
     title: 'Simplified Event Creation',
     description:
-      'Effortlessly establish and manage events with our user-friendly event creation functionality. Define event specifics such as dates, times, locations, and descriptions to provide attendees with a clear understanding. Customize event configurations, incorporate event visuals, and establish ticketing choices with ease.',
+      'Easily create and manage events by defining dates, locations, and visuals. Customize event details and ticketing options effortlessly.',
     icon: <IoCreateOutline />,
   },
   {
     title: 'Real-Time Updates',
     description:
-      'Stay informed about event developments with our real-time notification system. Receive alerts regarding event changes, attendee responses, and more. Never overlook crucial event information with our notification capability.',
+      'Get instant notifications on event changes and attendee responses to stay updated and never miss important information.',
     icon: <IoNotificationsOutline />,
   },
   {
     title: 'Effortless Participant Invitations',
     description:
-      'Invite participants effortlessly by disseminating invitation links directly through our application. Share invitation links via email, messaging platforms, or social media channels. Ensure a smooth registration process and monitor attendee responses for effective event coordination.',
+      'Send invitation links through email or social media for easy registration and track attendee responses.',
     icon: <IoTicketOutline />,
   },
   {
     title: 'Adaptable Event Privacy',
     description:
-      'Exercise authority over event visibility with our selection of private and public event alternatives. Arrange private gatherings with restricted access for chosen invitees or arrange public events to engage a broader audience. Tailor privacy settings to accommodate the distinct requirements of each event.',
+      'Control event visibility with options for private or public settings, tailoring privacy to suit your event’s needs.',
     icon: <MdOutlinePrivacyTip />,
   },
   {
     title: 'Simple Attendee Management',
     description:
-      'Monitor attendees effortlessly with our comprehensive attendee management feature. Easily monitor and manage RSVPs, track attendance, and gather essential participant details. Utilize QR Codes to check-in attendees and ensure a seamless event experience for all participants.',
+      'Easily track RSVPs, attendance, and participant details. Use QR codes for quick check-ins to enhance the event.',
     icon: <IoPeopleOutline />,
   },
   {
     title: 'Attendee List Download',
     description:
-      "In an era of uncertain connectivity, it's crucial to remain connected. Thus, SearchMyClub enables event hosts to download attendee lists for each event through our attendee list download feature. Export attendee lists in XLSX format for convenient access and management.",
+      'Download attendee lists in XLSX format for easy access and management, ensuring you stay connected even without internet.',
     icon: <MdOutlineFileDownload />,
   },
 ];
@@ -82,130 +102,211 @@ function Landing() {
 
   return (
     <div className="flex-1 bg-white font-poppins select-none">
-      <div className="bg-secondary relative">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 relative h-full">
         <div className="absolute inset-0 bg-opacity-50 backdrop-filter backdrop-blur-sm"></div>
-        <section className="flex flex-col text-center w-full items-center py-8 lg:py-16 justify-center gap-8 md:gap-0 container min-h-[75vh] relative">
-          <div
-            className="flex flex-col gap-4 items-center justify-center z-10"
-            style={{ flexBasis: '50%' }}
+        <section className="flex flex-col md:flex-row justify-center items-center w-full py-8 lg:py-16 gap-8 md:gap-0 container max-h-[85vh] mt-28 md:mt-0 relative">
+          {/* Hero Section */}
+          <motion.div
+            className="flex flex-col gap-4 justify-center z-10"
+            style={{ flexBasis: '70%' }}
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            <h1 className=" text-xl md:text-4xl lg:text-6xl text-slate-100 font-bold leading-relaxed lg:leading-normal drop-shadow-2xl">
-              Ignite Your Creativity
-              <br />
-              Design Unforgettable Gatherings
+            <motion.h1
+              className="text-3xl md:text-4xl lg:text-6xl text-black font-bold leading-relaxed lg:leading-normal drop-shadow-2xl"
+              variants={typewriterVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {'Ignite Your Creativity, Design Unforgettable Gatherings'
+                .split('')
+                .map((char, index) => (
+                  <motion.span key={index} variants={letterVariant}>
+                    {char}
+                  </motion.span>
+                ))}
+            </motion.h1>
+
+            <motion.p
+              className="md:max-w-[90%] text-base md:text-lg py-4 text-slate-400"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.5 }}
+            >
+              Effortless RSVP and Coordination for Creators with SearchMyClub
+            </motion.p>
+
+            <motion.div
+              className="inline-flex items-center gap-2"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+            >
+              <motion.div whileHover={{ scale: 1.05 }}>
+                <Link
+                  to={token ? '/dashboard' : '/auth/signup'}
+                  className="bg-black flex rounded-2xl px-4 py-2 text-white text-center font-semibold"
+                >
+                  {token ? 'Go to Dashboard >' : 'Get Started >'}
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }}>
+                <Link
+                  to="/explore"
+                  className="rounded-2xl flex px-4 py-2 text-black text-center font-semibold"
+                >
+                  Explore Events {'\u003E'}
+                </Link>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+
+          {/* Image Reveal */}
+          <motion.div
+            className="flex w-full h-[70vh] justify-center items-center mb-12 md:mb-0"
+            style={{ flexBasis: '50%' }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, ease: 'easeInOut', delay: 1 }}
+          >
+            <motion.img src={People} className="w-full" />
+          </motion.div>
+        </section>
+        <SliderClubs />
+      </div>
+      <section className="relative flex flex-col-reverse lg:flex-row w-full py-12 md:py-16 justify-between gap-8 container max-w-7xl min-h-[75vh]">
+        {/* Image Section */}
+        <motion.div
+          className="w-full flex justify-center items-center"
+          style={{ flexBasis: '50%' }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+        >
+          <img className="rounded-xl shadow-lg" src={Hero2} alt="Hero" />
+        </motion.div>
+
+        {/* Text Section */}
+        <motion.div
+          className="flex flex-col gap-6 text-left justify-center"
+          style={{ flexBasis: '50%' }}
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <div className="flex flex-col">
+            <span className="text-indigo-500 text-sm font-semibold tracking-wide uppercase">
+              Empowering Creators
+            </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl text-primary font-semibold leading-tight my-6">
+              Unlock Your Creative Drive
             </h1>
-            <p className=" md:max-w-[90%] py-2 text-lg text-slate-400">with</p>
-            <h1 className=" text-2xl md:text-4xl lg:text-6xl text-slate-100 font-bold leading-relaxed lg:leading-normal drop-shadow-2xl">
-              SearchMyClub
-            </h1>
-            <p className=" md:max-w-[90%] py-4 text-slate-400">
-              Effortless RSVP and Coordination for Creators
+            <p className="text-base md:text-lg leading-relaxed text-gray-600 mb-6">
+              Our platform empowers individual creators and artists to unleash
+              imagination and orchestrate unforgettable gatherings. Whether it's
+              a solo showcase, live performance, or workshop, our tools ensure
+              your events are a remarkable success.
             </p>
-            <div className="inline-flex items-center gap-2">
+          </div>
+          <motion.div
+            className="inline-flex items-center gap-2"
+            initial={{ opacity: 0, x: -25 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, delay: 1.5 }}
+          >
+            <motion.div whileHover={{ scale: 1.05 }}>
               <Link
                 to={token ? '/dashboard' : '/auth/signup'}
-                className="bg-gradient-to-b shadow-xl focus:ring-accent from-accent to-accent/90 rounded-full p-4 text-white text-center"
+                className="bg-black flex rounded-2xl px-4 py-2 text-white text-center font-semibold"
               >
-                {token ? 'Go to Dashboard' : 'Get Started'}
+                {token ? 'Go to Dashboard >' : 'Get Started >'}
               </Link>
-              <Link
-                to={'/explore'}
-                className="bg-gradient-to-r shadow-xl from-primary to-primary/90 rounded-full p-4 text-white text-center"
-              >
-                Explore Events
-              </Link>
-            </div>
-          </div>
-          <div className=" w-full relative"></div>
-        </section>
-      </div>
-      <section className="flex flex-col-reverse  lg:flex-row w-full py-8 md:py-16 justify-between gap-8 md:gap-0 container">
-        <div className="md:pt-16 " style={{ flexBasis: '50%' }}>
-          <img className="w-full" src={Hero2} />
-        </div>
-        <div
-          className="flex flex-col gap-4 items-start justify-evenly text-left py-8 lg:pl-16"
-          style={{ flexBasis: '50%' }}
-        >
-          <p className="text-accent tracking-[1px] font-semibold items-center gap-2 flex">
-            <hr className="w-20 h-1 bg-accent"></hr>
-          </p>
-          <h1 className="text-3xl md:text-5xl text-primary font-semibold md:leading-normal">
-            Unlock Your Creative Drive
-          </h1>
-          <hr className="w-full border border-neutral-200"></hr>
-          <p className="text-sm leading-[1.4rem] md:max-w-[90%] py-4 text-neutral-500 text-justify">
-            Our platform empowers individual creators and artists like you to
-            unleash your imagination and orchestrate unforgettable gatherings.
-            Whether you're organizing a solo showcase, a live performance, or a
-            collaborative workshop, our tools and features equip you to make
-            your events a remarkable success.
-          </p>
-          <Link
-            to={token ? 'Go to Dashboard' : '/auth/signup'}
-            className="bg-accent rounded-full p-4 text-white text-center"
-          >
-            {token ? 'Go to Dashboard' : 'Get Started'}
-          </Link>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </section>
-      <div className="bg-gradient-to-b from-secondary from-100% to-50% to-white pb-10">
+
+      <div className="">
         <section className="flex flex-col lg:flex-row w-full items-center py-8 lg:pt-16 lg:pb-0 justify-between gap-4 md:gap-0 container">
-          <div className="flex flex-row gap-16">
+          <div className="flex flex-col mb-4">
             <div className="flex-[80%] space-y-4">
               <p className="text-accent tracking-[1px] font-semibold  items-center gap-2 flex">
-                <div className="w-20 h-1 bg-accent"></div> Secure
+                <span className="text-indigo-500 text-sm font-semibold tracking-wide uppercase">
+                  Security
+                </span>
               </p>
-              <h1 className="text-3xl md:text-5xl text-white font-semibold md:leading-normal">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl text-primary font-semibold leading-tight my-6">
                 Effortless Event Planning and Coordination
               </h1>
             </div>
+            <p className="flex-[80%] w-full text-base md:text-lg leading-relaxed md:max-w-[90%] py-4 text-gray-600 text-justify mt-6">
+              Bid farewell to the complexities of event organization. Our
+              intuitive interface simplifies the process, enabling you to
+              concentrate on your artistic pursuits. Seamlessly create and
+              oversee events, from scheduling dates and venues to furnishing
+              event details and ticketing options. Streamline your planning
+              journey and transform your vision into reality.
+            </p>
           </div>
-          <p className="flex-[80%] w-full text-sm leading-[1.4rem] md:max-w-[90%] py-4 text-white text-justify">
-            Bid farewell to the complexities of event organization. Our
-            intuitive interface simplifies the process, enabling you to
-            concentrate on your artistic pursuits. Seamlessly create and oversee
-            events, from scheduling dates and venues to furnishing event details
-            and ticketing options. Streamline your planning journey and
-            transform your vision into reality.
-          </p>
         </section>
-        <div className="flex flex-row gap-4 py-4 items-center justify-between container">
+        <div className="flex flex-row py-4 items-center justify-between container">
           <hr className="w-full  border border-neutral-200 opacity-30"></hr>
         </div>
         <div className="w-full h-full rounded-md flex flex-col antialiased items-center justify-center relative overflow-hidden">
           <InfiniteMovingCards items={data} direction="left" speed="slow" />
         </div>
       </div>
-      <section className="flex flex-col-reverse lg:flex-row-reverse w-full py-8 md:py-16 justify-between gap-8 md:gap-0 container">
-        <div className="" style={{ flexBasis: '50%' }}>
-          <img className="w-full" src={Security} />
-        </div>
-        <div
-          className="flex flex-col gap-4 items-start justify-evenly text-left py-8 lg:pr-16"
+      <section className="relative flex flex-col-reverse lg:flex-row w-full py-12 md:py-16 justify-between gap-8 container max-w-7xl min-h-[75vh]">
+        {/* Text Section */}
+        <motion.div
+          className="flex flex-col gap-6 text-left justify-center"
           style={{ flexBasis: '50%' }}
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1 }}
         >
-          <p className="text-accent tracking-[1px] font-semibold items-center gap-2 flex">
-            <hr className="w-20 h-1 bg-accent"></hr> Registrations Made Easy
-          </p>
-          <h1 className="text-3xl md:text-5xl text-primary font-semibold md:leading-normal">
-            Safety and Dependability
-          </h1>
-          <hr className="w-full border border-neutral-200"></hr>
-          <p className="text-sm leading-[1.4rem] md:max-w-[90%] py-4 text-neutral-500 text-justify">
-            Rest assured that your event information is safeguarded with our web
-            application. We prioritize data security and implement
-            industry-standard measures to protect your data. Our robust
-            infrastructure ensures uninterrupted event management, allowing you
-            to concentrate on creating exceptional experiences.
-          </p>
-          <Link
-            to={token ? '/dashboard' : '/auth/signup'}
-            className="bg-gradient-to-r from-primary to-primary rounded-full px-6 p-4 text-white text-center"
+          <div className="flex flex-col">
+            <span className="text-indigo-500 text-sm font-semibold tracking-wide uppercase">
+              Registrations Made Easy
+            </span>
+            <h1 className="text-3xl md:text-5xl text-primary font-semibold md:leading-normal my-6">
+              Safety and Dependability
+            </h1>
+            <p className="text-base md:text-lg leading-[1.4rem] md:max-w-[90%] text-neutral-500 text-justify mb-6">
+              Rest assured that your event information is safeguarded with our
+              web application. We prioritize data security and implement
+              industry-standard measures to protect your data. Our robust
+              infrastructure ensures uninterrupted event management, allowing
+              you to concentrate on creating exceptional experiences.
+            </p>
+          </div>
+          <motion.div
+            className="inline-flex items-center gap-2"
+            initial={{ opacity: 0, x: -25 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, delay: 1.5 }}
           >
-            {token ? 'Go to Dashboard' : 'Get Started'}
-          </Link>
-        </div>
+            <motion.div whileHover={{ scale: 1.05 }}>
+              <Link
+                to={token ? '/dashboard' : '/auth/signup'}
+                className="bg-black flex rounded-2xl px-4 py-2 text-white text-center font-semibold"
+              >
+                {token ? 'Go to Dashboard >' : 'Get Started >'}
+              </Link>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+        {/* Image Section */}
+        <motion.div
+          className="w-full flex justify-center items-center"
+          style={{ flexBasis: '50%' }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+        >
+          <img className="rounded-xl shadow-lg" src={Security} alt="Security" />
+        </motion.div>
       </section>
     </div>
   );

@@ -92,33 +92,39 @@ function SignupLogic() {
     e?.preventDefault();
     if (!name || !email || !password || !CPassword) {
       toast.error('Please fill all fields');
-      setValidateMessage(prev => 'Please fill all fields');
+      setValidateMessage('Please fill all fields');
       return;
     }
     if (password !== CPassword) {
       toast.error('Passwords do not match');
-      setValidateMessage(prev => 'Passwords do not match');
+      setValidateMessage('Passwords do not match');
       return;
     }
-    setSigningin(prev => true);
-    setValidateMessage(prev => null);
+    setSigningin(true);
+    setValidateMessage(null);
 
     const account = new Account(client);
     const database = new Databases(client);
+
     try {
+      // Create user in Appwrite
       const response = await account.create(ID.unique(), email, password, name);
 
-      const addUserToDBResponse = await database.createDocument(
+      // Add user to database including the CPassword attribute
+      await database.createDocument(
         process.env.REACT_APP_DATABASE_ID,
         process.env.REACT_APP_USERS_COLLECTION_ID,
         ID.unique(),
         {
-          name,
-          email,
+          Name: name, // Ensure this matches the exact casing
+          email: email, // Ensure this matches the exact casing
+          password: password, // Include password
+          CPassword: CPassword, // Include CPassword (if necessary)
           userId: response.$id,
         }
       );
 
+      // Create session
       const loggedInResponse = await account.createEmailSession(
         email,
         password
@@ -135,10 +141,11 @@ function SignupLogic() {
         },
       });
     } catch (error) {
-      setValidateMessage(prev => error.message);
+      setValidateMessage(error.message);
       toast.error(error.message);
+      console.error('Sign Up Error:', error); // Log the error for debugging
     } finally {
-      setSigningin(prev => false);
+      setSigningin(false);
     }
   };
 
