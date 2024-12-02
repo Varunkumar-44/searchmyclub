@@ -49,16 +49,16 @@ function Sidebar() {
       <div className="sidebar-link hover:bg-transparent hover:shadow-none w-max">
         <Brand />
       </div>
-      <Link className="sidebar-link" to="">
+      <Link className="sidebar-link" to="/dashboard/">
         <IoHomeOutline /> Home
       </Link>
-      <NavLink className="sidebar-link" to="events?filter=total">
+      <NavLink className="sidebar-link" to="/dashboard/events?filter=total">
         <IoCalendarClearOutline /> Events
       </NavLink>
-      <NavLink className="sidebar-link" to="invities">
-        <IoTicketOutline /> Invities
+      <NavLink className="sidebar-link" to="/dashboard/clubs">
+        <IoTicketOutline /> Clubs
       </NavLink>
-      <NavLink className="sidebar-link" to="rsvp">
+      <NavLink className="sidebar-link" to="/dashboard/rsvp">
         <IoPeopleOutline /> RSVPs
       </NavLink>
       <button className="sidebar-link" onClick={toggleNotificationBar}>
