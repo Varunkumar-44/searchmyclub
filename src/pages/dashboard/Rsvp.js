@@ -15,7 +15,7 @@ function Rsvps() {
   const [loadingRsvps, setLoadingRsvps] = useState(false);
   const [eventId, setEventId] = useState(null);
 
-  const userId = JSON.parse(localStorage.getItem('token'))?.userId;
+  const userId = localStorage.getItem('token');
 
   const getEventRsvps = useCallback(async () => {
     if (userId) {

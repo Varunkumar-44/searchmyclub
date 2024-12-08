@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import client from '../../appwrite.config';
-import { Account } from 'appwrite';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+const API_BASE_URL = 'https://search-my-club-backend.vercel.app/';
 
 function LoginLogic() {
   const [showPass, setShowPass] = useState(false);
@@ -14,100 +15,79 @@ function LoginLogic() {
 
   const navigate = useNavigate();
 
-  const inputs = [
-    {
-      label: 'Email',
-      placeholder: 'example@email.com',
-      value: email,
-      cb: setEmail,
-      type: 'email',
-    },
-    {
-      label: 'Password',
-      placeholder: 'Please pick a strong password',
-      value: password,
-      cb: setPassword,
-      inputMode: 'text',
-      keyboard: 'default',
-      type: !showPass ? 'password' : 'text',
-      rightIcon: (
-        <button
-          onClick={e => {
-            e?.preventDefault();
-            setShowPass(prev => !prev);
-          }}
-        >
-          {showPass ? (
-            <AiOutlineEye size={24} />
-          ) : (
-            <AiOutlineEyeInvisible size={24} />
-          )}
-        </button>
-      ),
-    },
-  ];
-
   const loginUser = async e => {
     e?.preventDefault();
-    setSigningin(prev => true);
-    setValidateMessage(prev => null);
-
-    const account = new Account(client);
+    setSigningin(true);
+    setValidateMessage(null);
 
     try {
-      const loggedInResponse = await account.createEmailSession(
+      const response = await axios.post(`${API_BASE_URL}api/auth/login`, {
         email,
-        password
-      );
+        password,
+      });
 
-      localStorage.setItem('token', JSON.stringify(loggedInResponse));
-      toast.success('Logged in successfully');
-      const accountDetails = await account.get();
+      // Extract user_id from the response
+      const { user_id, message } = response.data;
 
-      if (accountDetails.phoneVerification) navigate('/', { replace: true });
-      else if (
-        accountDetails.phone.length === 0 ||
-        accountDetails.phone === null ||
-        accountDetails.phone === undefined
-      )
-        navigate('/auth/phone', {
-          replace: true,
-          state: { ...loggedInResponse, email, password },
-        });
-      else {
-        const sendOTPResponse = await account.createPhoneVerification();
+      if (user_id) {
+        // Save the user_id to localStorage as "token"
+        console.log('user_id', user_id);
+        window.localStorage.setItem('token', user_id);
 
-        toast.success('OTP sent to your phone.');
-        navigate('/auth/otp', {
-          state: {
-            ...sendOTPResponse,
-            email,
-            password,
-            phone: accountDetails.phone,
-          },
-          replace: true,
-        });
+        // Show success toast
+        toast.success(message || 'Logged in successfully');
+
+        // Navigate to the home page (or any other page after successful login)
+        navigate('/', { replace: true });
+      } else {
+        throw new Error('Login response missing user_id');
       }
     } catch (error) {
-      setValidateMessage(prev => error.message);
-      toast.error(error.message);
+      // Set validation message for UI feedback
+      setValidateMessage(
+        error.response?.data?.message || error.message || 'Login failed'
+      );
+      toast.error(
+        error.response?.data?.message || error.message || 'Login failed'
+      );
     } finally {
-      setSigningin(prev => false);
+      setSigningin(false);
     }
   };
 
   return {
-    inputs,
+    inputs: [
+      {
+        label: 'Email',
+        placeholder: 'example@email.com',
+        value: email,
+        cb: setEmail,
+        type: 'email',
+      },
+      {
+        label: 'Password',
+        placeholder: 'Please pick a strong password',
+        value: password,
+        cb: setPassword,
+        inputMode: 'text',
+        keyboard: 'default',
+        type: !showPass ? 'password' : 'text',
+        rightIcon: (
+          <button
+            onClick={e => {
+              e.preventDefault();
+              setShowPass(prev => !prev);
+            }}
+          >
+            {showPass ? '👁️' : '🙈'}
+          </button>
+        ),
+      },
+    ],
     validateMessage,
     signingin,
     setSigningin,
     setValidateMessage,
-    showPass,
-    setShowPass,
-    email,
-    setEmail,
-    password,
-    setPassword,
     loginUser,
   };
 }

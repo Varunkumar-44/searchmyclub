@@ -11,7 +11,7 @@ function Clubs() {
   const [filter, setFilter] = useState('all'); // 'all' or 'following'
   const [followedClubs, setFollowedClubs] = useState([]);
 
-  const userId = JSON.parse(localStorage.getItem('token')).userId;
+  const userId = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchClubs = async () => {

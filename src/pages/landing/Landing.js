@@ -98,7 +98,7 @@ function Landing() {
   const swiper = useSwiper();
   const swiperRef = useRef(null);
 
-  const token = JSON.parse(localStorage.getItem('token'));
+  const token = window.localStorage.getItem('token');
 
   return (
     <div className="flex-1 bg-white font-poppins select-none">

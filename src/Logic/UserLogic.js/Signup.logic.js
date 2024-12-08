@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Account, ID, Databases } from 'appwrite';
-import client from '../../appwrite.config.js';
+import axios from 'axios';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+
+const API_BASE_URL = 'https://search-my-club-backend.vercel.app/';
 
 function SignupLogic() {
   const [showPass, setShowPass] = useState(false);
@@ -11,6 +12,7 @@ function SignupLogic() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
   const [CPassword, setCPassword] = useState('');
   const [validateMessage, setValidateMessage] = useState(null);
   const [signingin, setSigningin] = useState(false);
@@ -33,6 +35,14 @@ function SignupLogic() {
       value: email,
       type: 'email',
       cb: setEmail,
+      required: true,
+    },
+    {
+      label: 'Phone Number',
+      name: 'phone',
+      placeholder: '+91 1234567890',
+      value: phone,
+      cb: setPhone,
       required: true,
     },
     {
@@ -103,46 +113,36 @@ function SignupLogic() {
     setSigningin(true);
     setValidateMessage(null);
 
-    const account = new Account(client);
-    const database = new Databases(client);
-
     try {
-      // Create user in Appwrite
-      const response = await account.create(ID.unique(), email, password, name);
-
-      // Add user to database including the CPassword attribute
-      await database.createDocument(
-        process.env.REACT_APP_DATABASE_ID,
-        process.env.REACT_APP_USERS_COLLECTION_ID,
-        ID.unique(),
+      // Send request to create a new user in the backend
+      const response = await axios.post(
+        `${API_BASE_URL}api/auth/signup`,
         {
-          Name: name, // Ensure this matches the exact casing
-          email: email, // Ensure this matches the exact casing
-          password: password, // Include password
-          CPassword: CPassword, // Include CPassword (if necessary)
-          userId: response.$id,
+          name,
+          email,
+          password,
+          phone,
+          role: 'member',
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.JWT_KEY}`,
+          },
         }
       );
 
-      // Create session
-      const loggedInResponse = await account.createEmailSession(
-        email,
-        password
-      );
+      // Create session or token after successful signup
+      localStorage.setItem('token', response.data.user_id);
 
-      localStorage.setItem('token', JSON.stringify(loggedInResponse));
       toast.success('Signed up successfully');
       navigate('/auth/phone', {
         replace: true,
-        state: {
-          ...loggedInResponse,
-          email,
-          password,
-        },
+        state: { email, password },
       });
     } catch (error) {
-      setValidateMessage(error.message);
-      toast.error(error.message);
+      setValidateMessage(error.response?.data?.message || 'Sign up failed');
+      toast.error(error.response?.data?.message || 'Sign up failed');
       console.error('Sign Up Error:', error); // Log the error for debugging
     } finally {
       setSigningin(false);
