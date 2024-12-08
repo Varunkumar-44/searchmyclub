@@ -10,15 +10,15 @@ const EventCard = ({
     category,
     image,
     location,
-    $id,
+    event_id,
     medium,
-    startDate,
-    endDate,
+    start_date,
+    end_date,
   },
 }) => {
   return (
     <Link
-      to={`/dashboard/event/${$id}`}
+      to={`/dashboard/event/${event_id}`}
       className="bg-white overflow-hidden text-black p-2 rounded-[18px] mr-2 outline outline-1 outline-neutral-100 shadow-sm hover:shadow-lg transition-all"
     >
       <div className="relative">
@@ -63,14 +63,16 @@ const EventCard = ({
           </p>
         </div>
         <div className="flex md:flex-col gap-2  items-center md:items-end h-full justify-evenly">
-          <p>{new Date(startDate?.split('+')[0]).toTimeString().slice(0, 5)}</p>
+          <p>
+            {new Date(start_date?.split('+')[0]).toTimeString().slice(0, 5)}
+          </p>
           <p className="text-xs text-neutral-600">
-            {new Date(startDate?.split('+')[0]).toDateString().slice(4)}
+            {new Date(start_date?.split('+')[0]).toDateString().slice(4)}
           </p>
           <hr className="w-[1px] h-full md:w-full md:h-[1px]"></hr>
-          <p>{new Date(endDate?.split('+')[0]).toTimeString().slice(0, 5)}</p>
+          <p>{new Date(end_date?.split('+')[0]).toTimeString().slice(0, 5)}</p>
           <p className="text-xs text-neutral-600">
-            {new Date(endDate?.split('+')[0]).toDateString().slice(4)}
+            {new Date(end_date?.split('+')[0]).toDateString().slice(4)}
           </p>
         </div>
       </div>

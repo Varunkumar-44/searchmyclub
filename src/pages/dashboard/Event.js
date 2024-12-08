@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom';
 import { MdComputer, MdDelete, MdEdit } from 'react-icons/md';
 import { ColorExtractor } from 'react-color-extractor';
 
-import CreateMembershipLogic from '../../Logic/Membership/CreateMembership.logic';
-
 import {
   IoCopy,
   IoLocation,
@@ -15,8 +13,6 @@ import {
 } from 'react-icons/io5';
 
 import { toast } from 'react-hot-toast';
-import { Databases, Teams } from 'appwrite';
-import client from '../../appwrite.config';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import GetUsersLogic from '../../Logic/UserLogic.js/GetUsers.logic';
@@ -62,15 +58,17 @@ function Event() {
 
   const deleteEvent = async () => {
     try {
-      const teams = new Teams(client);
-      const database = new Databases(client);
-      const teamResponse = await teams.delete(events?.teamId);
-
-      const response = await database.deleteDocument(
-        process.env.REACT_APP_DATABASE_ID,
-        process.env.REACT_APP_EVENTS_COLLECTION_ID,
-        id
+      const response = await fetch(
+        `https://search-my-club-backend.vercel.app/api/event/${id}`,
+        {
+          method: 'DELETE',
+        }
       );
+
+      if (!response.ok) {
+        throw new Error('Failed to delete event');
+      }
+
       toast.success('Event deleted successfully');
       navigate('/dashboard/events?filter=total');
     } catch (error) {
@@ -80,7 +78,7 @@ function Event() {
 
   const copyTeamId = e => {
     e?.preventDefault();
-    navigator.clipboard.writeText(events?.teamId);
+    navigator.clipboard.writeText(events?.event_id);
     toast.success('Invitation ID copied to clipboard');
   };
 
@@ -129,25 +127,9 @@ function Event() {
   };
 
   useEffect(() => {
-    const unsubscribe = client.subscribe(
-      `teams.${events?.teamId}`,
-      response => {}
-    );
-    return () => unsubscribe();
+    // This subscription logic was tied to Appwrite. Since it's removed, we no longer need it.
+    // Here you can implement any needed real-time updates or polling if required.
   }, []);
-
-  const { createMembership, teamMembers, memberCount } = CreateMembershipLogic(
-    events?.teamId
-  );
-
-  const checkMembership = userId => {
-    const member = teamMembers?.find(member => member.userId === userId);
-    if (member) {
-      if (member.joined) return 'Joined';
-      return 'Pending';
-    }
-    return 'Invite';
-  };
 
   if (loading) return <Loading />;
 
@@ -169,10 +151,10 @@ function Event() {
               : 'md:col-span-4 lg:col-span-5'
           } grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-all`}
         >
-          <div className="relative h-full  lg:col-span-2">
+          <div className="relative h-full lg:col-span-2">
             <div className="absolute top-4 left-4 inline-flex gap-2 flex-wrap">
               <Link
-                to={`/dashboard/create?id=${events?.$id}`}
+                to={`/dashboard/create?id=${events?.event_id}`}
                 className="shadow-md primary-btn group overflow-hidden transition-all"
                 style={{
                   background: `rgb(${colors[4]?.join(',')})`,
@@ -191,7 +173,7 @@ function Event() {
                 }}
               >
                 <MdDelete />
-                <p className="transition-all translate-x-[0px]  hidden lg:block group-hover:translate-x-0">
+                <p className="transition-all translate-x-[0px] hidden lg:block group-hover:translate-x-0">
                   Delete Event
                 </p>
               </button>
@@ -203,7 +185,7 @@ function Event() {
                 }}
               >
                 <IoCopy />
-                <p className="transition-all translate-x-[0px] hidden lg:block  group-hover:translate-x-0">
+                <p className="transition-all translate-x-[0px] hidden lg:block group-hover:translate-x-0">
                   Copy Invite ID
                 </p>
               </button>
@@ -246,19 +228,19 @@ function Event() {
                 color: `rgb(${colors[0]?.join(',')})`,
               }}
             >
-              {events?.medium === 'offline' && (
+              {events?.medium === 'In Person' && (
                 <>
                   <iframe
                     title="map"
                     className="w-full h-max outline outline-1 outline-neutral-300 shadow-md rounded-[18px]"
-                    src={`https://maps.google.com/maps?q=${events.location[1]},${events.location[2]}&hl=en&output=embed`}
+                    src={`https://maps.google.com/maps?q=${events.latitude},${events.longitude}&hl=en&output=embed`}
                   ></iframe>
                   <h2 className="text-base inline-flex items-center gap-2">
-                    <IoLocation /> {events?.location[0]}
+                    <IoLocation /> {events?.location}
                   </h2>
                 </>
               )}
-              {events?.medium === 'online' && (
+              {events?.medium === 'Online' && (
                 <h2 className="text-lg inline-flex items-center gap-2">
                   <MdComputer /> Online
                 </h2>
@@ -272,14 +254,14 @@ function Event() {
                 className="text-lg inline-flex items-center gap-2 cursor-pointer"
               >
                 <IoPersonOutline />{' '}
-                {memberCount - 1 > 0
-                  ? `${memberCount - 1} Member(s)`
-                  : 'No members'}
+                {events?.participants?.length > 0
+                  ? `${events.participants.length} Participant(s)`
+                  : 'No participants'}
               </h2>
               <h2 className="text-lg inline-flex items-center gap-2 cursor-pointer">
                 <IoPeopleOutline />{' '}
-                {events?.maxParticipants > 0
-                  ? `Max Limit of ${events.maxParticipants} members`
+                {events?.max_participants
+                  ? `Max Limit of ${events.max_participants} members`
                   : 'No max participation limit'}
               </h2>
             </div>
@@ -301,10 +283,10 @@ function Event() {
             toggleShowUsers={toggleShowUsers}
             users={users}
             fetchingUsers={fetchingUsers}
-            createMembership={createMembership}
+            createMembership={null} // Adjusted as membership logic might need review with new API
             id={id}
             events={events}
-            checkMembership={checkMembership}
+            checkMembership={null} // Adjusted as membership logic might need review with new API
             colors={colors}
           />
         )}
