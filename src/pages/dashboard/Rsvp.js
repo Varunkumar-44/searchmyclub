@@ -1,144 +1,124 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Loading from '../../components/Loading';
-import UserList from '../../components/UserList';
-import client from '../../appwrite.config';
-import { Databases, Query } from 'appwrite';
-import {
-  MdOutlinePersonAdd,
-  MdOutlinePersonRemove,
-  MdPeopleOutline,
-} from 'react-icons/md';
+import { IoLocation } from 'react-icons/io5';
+import { MdComputer } from 'react-icons/md';
 
 function Rsvps() {
-  const [rsvps, setRsvps] = useState(null);
-  const [simplifiedRsvps, setSimplifiedRsvps] = useState(null);
-  const [loadingRsvps, setLoadingRsvps] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [rsvps, setRsvps] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [eventId, setEventId] = useState(null);
 
   const userId = localStorage.getItem('token');
 
-  const getEventRsvps = useCallback(async () => {
+  // Fetch all events from the API
+  const getAllEvents = useCallback(async () => {
     if (userId) {
       try {
-        setLoadingRsvps(prev => true);
-        const database = new Databases(client);
-        const response = await database.listDocuments(
-          process.env.REACT_APP_DATABASE_ID,
-          process.env.REACT_APP_RSVP_COLLECTION_ID,
-          [Query.equal('ownerUserId', userId), Query.equal('pending', true)]
+        setLoading(true);
+        const response = await fetch(
+          'https://search-my-club-backend.vercel.app/api/event'
         );
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
 
-        setRsvps(prev => response?.documents);
-        const groupedData = {};
-        response?.documents?.forEach(document => {
-          const key = `${document.eventName}_${document.eventId}`;
-          if (!groupedData[key]) {
-            groupedData[key] = {
-              eventName: document?.eventName,
-              eventId: document?.eventId,
-              teamId: document?.teamId,
-              approvedCount: 0,
-              rejectedCount: 0,
-              users: [],
-            };
-          }
-          if (document.approved) {
-            groupedData[key].approvedCount++;
-          } else if (document.rejected) {
-            groupedData[key].rejectedCount++;
-          }
-
-          const user = {
-            documentId: document?.$id,
-            teamId: document?.teamId,
-            name: document?.userName,
-            email: document?.userEmail,
-            approved: document?.approved,
-            rejected: document?.rejected,
-            userId: document?.userId,
-            eventName: document?.eventName,
-            eventId: document?.eventId,
-            membershipId: document?.membershipId,
-          };
-          groupedData[key].users.push(user);
-        });
-
-        setSimplifiedRsvps(prev => Object.values(groupedData));
-      } catch (err) {
+        const data = await response.json();
+        setEvents(data); // Store all events in the events state
+      } catch (error) {
+        console.error('Error fetching events:', error);
       } finally {
-        setLoadingRsvps(prev => false);
+        setLoading(false);
       }
     }
   }, [userId]);
 
-  useEffect(() => {
-    if (userId) getEventRsvps();
-  }, [getEventRsvps]);
+  // Filter events based on whether the user is in the participants list
+  const getUserRsvps = useCallback(() => {
+    if (userId && events.length > 0) {
+      const filteredRsvps = events.filter(event =>
+        event.participants?.includes(userId)
+      );
+      setRsvps(filteredRsvps); // Set filtered events
+    }
+  }, [events, userId]);
 
-  if (loadingRsvps) return <Loading />;
+  useEffect(() => {
+    if (userId) {
+      getAllEvents(); // Fetch all events
+    }
+  }, [getAllEvents, userId]);
+
+  useEffect(() => {
+    getUserRsvps(); // Filter events after they are fetched
+  }, [events, getUserRsvps]);
+
+  if (loading) return <Loading />;
 
   return (
-    <>
-      {simplifiedRsvps && simplifiedRsvps?.length > 0 ? (
-        <div className="flex w-full flex-col py-6 group">
-          {simplifiedRsvps?.map(event => (
-            <div className="flex w-full justify-between py-4 border-b-neutral-200 border-b">
-              <h3
-                className="text-lg font-semibold cursor-pointer"
-                onClick={e => {
-                  e?.preventDefault();
-                  setEventId(event?.eventId);
-                }}
+    <div className="min-h-screen py-6 px-4">
+      <div className="max-w-screen-xl mx-auto">
+        {rsvps.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {rsvps.map(rsvp => (
+              <div
+                key={rsvp.event_id}
+                className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-transform hover:scale-105"
               >
-                {event?.eventName}
-              </h3>
-              <div className="inline-flex items-center gap-6 select-none">
-                <UserCount
-                  count={event?.users?.length}
-                  icon={<MdPeopleOutline />}
-                  title="Total"
-                />
-                <UserCount
-                  count={event?.approvedCount}
-                  icon={<MdOutlinePersonAdd />}
-                  title="Approved"
-                />
-                <UserCount
-                  count={event?.rejectedCount}
-                  icon={<MdOutlinePersonRemove />}
-                  title="Rejected"
-                />
+                <div
+                  className="relative h-48 bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url(${rsvp.image || 'https://placehold.co/400x400'})`,
+                  }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50"></div>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-2xl font-semibold text-gray-800">
+                    {rsvp.title}
+                  </h3>
+                  <p className="text-gray-600 mt-2">{rsvp.description}</p>
+                  <div className="flex items-center mt-4 gap-3 text-gray-500">
+                    {rsvp.medium === 'In Person' ? (
+                      <IoLocation className="text-lg" />
+                    ) : (
+                      <MdComputer className="text-lg" />
+                    )}
+                    <p className="text-sm">{rsvp.location || 'Online'}</p>
+                  </div>
+                  <div className="mt-4 flex justify-between items-center">
+                    <div className="text-xs text-gray-500">
+                      <p>{new Date(rsvp.start_date).toLocaleString()}</p>
+                      <p>{new Date(rsvp.end_date).toLocaleString()}</p>
+                    </div>
+                    <div className="text-sm font-semibold text-gray-700">
+                      {rsvp.participants.length} / {rsvp.max_participants}{' '}
+                      Participants
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-neutral-500">You don't have any pending RSVPs yet</p>
-      )}
-      {eventId && (
-        <UserList
-          fetchingUsers={loadingRsvps}
-          toggleShowUsers={e => {
-            e?.preventDefault();
-            setEventId(prev => null);
-          }}
-          users={simplifiedRsvps.find(event => event.eventId === eventId).users}
-        />
-      )}
-    </>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-neutral-500">
+            You haven't RSVP'd to any events yet.
+          </p>
+        )}
+
+        {/* Show details for the specific event if the user clicks on an event */}
+        {eventId && (
+          <div className="mt-8 bg-white p-6 rounded-xl shadow-lg">
+            <h4 className="text-xl font-semibold">
+              Users attending{' '}
+              {rsvps.find(event => event.event_id === eventId)?.title}
+            </h4>
+            <p>Display list of users here...</p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
 export default Rsvps;
-
-function UserCount({ count, icon, title }) {
-  return (
-    <div
-      className="flex items-center gap-2 text-lg text-neutral-600"
-      title={title}
-    >
-      {icon}
-      <p>{count}</p>
-    </div>
-  );
-}

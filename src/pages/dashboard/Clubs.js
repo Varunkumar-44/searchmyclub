@@ -9,7 +9,6 @@ function Clubs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('all'); // 'all' or 'following'
-  const [followedClubs, setFollowedClubs] = useState([]);
 
   const userId = localStorage.getItem('token');
 
@@ -21,7 +20,7 @@ function Clubs() {
         );
         if (!response.ok) throw new Error('Failed to fetch clubs');
         const data = await response.json();
-        setClubs(data || []); // Ensure data.clubs is used if wrapped
+        setClubs(data || []); // Ensure data is not null
       } catch (err) {
         setError('Failed to load clubs');
       } finally {
@@ -34,14 +33,18 @@ function Clubs() {
 
   const handleFollow = async clubId => {
     try {
-      const club = clubs.find(club => club._id === clubId);
+      // Find the correct club by its club_id
+      const club = clubs.find(club => club.club_id === clubId);
       if (!club) throw new Error('Club not found');
 
+      // Prepare the updated members list
       const updatedMembers = [...club.members, userId];
+
+      // Send PATCH request to the API with the correct club_id and user_id
       const response = await fetch(
         `https://search-my-club-backend.vercel.app/api/club/${clubId}`,
         {
-          method: 'PUT',
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -51,22 +54,23 @@ function Clubs() {
 
       if (!response.ok) throw new Error('Failed to follow club');
 
+      // Update local state with the new members list
       setClubs(
         clubs.map(club =>
-          club._id === clubId ? { ...club, members: updatedMembers } : club
+          club.club_id === clubId ? { ...club, members: updatedMembers } : club
         )
       );
 
-      setFollowedClubs([...followedClubs, clubId]);
       toast.success('Followed club successfully');
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.message || 'Error following club');
     }
   };
 
+  // Filtered clubs based on the filter state
   const filteredClubs =
     filter === 'following'
-      ? clubs.filter(club => followedClubs.includes(club._id))
+      ? clubs.filter(club => club.members.includes(userId))
       : clubs;
 
   if (loading) return <Loading />;
@@ -88,7 +92,7 @@ function Clubs() {
         <div className="flex w-full flex-col py-6 group">
           {filteredClubs.map(club => (
             <div
-              key={club._id}
+              key={club.club_id}
               className="flex py-4 justify-between border-b border-neutral-300 group gap-2 items-center"
             >
               <Link
@@ -101,9 +105,9 @@ function Clubs() {
                 <IoPeopleOutline />
                 <p>{club.members?.length || 0} Member(s)</p>
               </button>
-              {!followedClubs.includes(club._id) ? (
+              {!club.members.includes(userId) ? (
                 <button
-                  onClick={() => handleFollow(club._id)}
+                  onClick={() => handleFollow(club.club_id)}
                   className="primary-btn ml-4"
                 >
                   Follow

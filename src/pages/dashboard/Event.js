@@ -58,6 +58,31 @@ function Event() {
 
   const deleteEvent = async () => {
     try {
+      // Fetch the user details
+      const token = localStorage.getItem('token'); // Assuming token is stored in local storage
+      const userResponse = await fetch(
+        `https://search-my-club-backend.vercel.app/api/user/${token}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!userResponse.ok) {
+        throw new Error('Failed to fetch user details');
+      }
+
+      const userData = await userResponse.json();
+
+      // Check if the user has the admin role
+      if (userData.role !== 'admin') {
+        toast.error('You do not have permission to delete this event');
+        return;
+      }
+
+      // Proceed to delete the event
       const response = await fetch(
         `https://search-my-club-backend.vercel.app/api/event/${id}`,
         {
@@ -72,7 +97,7 @@ function Event() {
       toast.success('Event deleted successfully');
       navigate('/dashboard/events?filter=total');
     } catch (error) {
-      toast.error('Error deleting event');
+      toast.error(error.message || 'Error deleting event');
     }
   };
 
@@ -153,7 +178,7 @@ function Event() {
         >
           <div className="relative h-full lg:col-span-2">
             <div className="absolute top-4 left-4 inline-flex gap-2 flex-wrap">
-              <Link
+              {/* <Link
                 to={`/dashboard/create?id=${events?.event_id}`}
                 className="shadow-md primary-btn group overflow-hidden transition-all"
                 style={{
@@ -164,7 +189,7 @@ function Event() {
                 <p className="transition-all translate-x-[0px] hidden lg:block group-hover:translate-x-0">
                   Edit Event
                 </p>
-              </Link>
+              </Link> */}
               <button
                 onClick={deleteEventToast}
                 className="shadow-md primary-btn group overflow-hidden transition-all"

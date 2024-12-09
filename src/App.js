@@ -27,6 +27,7 @@ import DashboardScreenLayout from './layouts/DashboardScreenLayout';
 import MarkAttendance from './pages/MarkAttendance';
 import ClubDetails from './pages/dashboard/ClubDetails';
 import CreateClub from './pages/dashboard/CreateClub';
+import Leaderboard from './pages/dashboard/Leaderboard';
 
 function App() {
   return (
@@ -98,6 +99,14 @@ function App() {
                 <DashboardScreenLayout title={'Your RSVPs'}>
                   {' '}
                   <Rsvps />{' '}
+                </DashboardScreenLayout>
+              }
+            />
+            <Route
+              path="leaderboard"
+              element={
+                <DashboardScreenLayout title={'Leaderboard'}>
+                  <Leaderboard />
                 </DashboardScreenLayout>
               }
             />

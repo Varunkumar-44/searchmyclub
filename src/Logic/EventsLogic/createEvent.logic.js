@@ -7,6 +7,9 @@ import { categories } from './categories';
 function CreateEventLogic() {
   const [validateMessage, setValidateMessage] = useState(null);
   const [signingin, setSigningin] = useState(false);
+  const [clubs, setClubs] = useState([]);
+  const [selectedClub, setSelectedClub] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
@@ -40,6 +43,51 @@ function CreateEventLogic() {
   const [acceptingRsvp, setAcceptingRsvp] = useState(false);
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  // To fetch clubs created by the user
+  const fetchClubs = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/club`, {
+        headers: {
+          Authorization: `Bearer ${process.env.JWT_TOKEN}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch clubs.');
+      }
+
+      const clubsData = await response.json();
+      setClubs(clubsData); // Assuming the API returns an array of clubs
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }, [API_BASE_URL]);
+
+  const fetchUser = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/user/${token}`, {
+          headers: {
+            Authorization: `Bearer ${process.env.JWT_TOKEN}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data.');
+        }
+
+        const userData = await response.json();
+        setUserId(userData.id);
+      } catch (err) {
+        toast.error(err.message);
+      }
+    }
+  }, [API_BASE_URL]);
+  useEffect(() => {
+    fetchClubs();
+    fetchUser();
+  }, [fetchClubs, fetchUser]);
 
   const handleImage = e => {
     if (e.target.files[0]) {
@@ -205,7 +253,7 @@ function CreateEventLogic() {
       // Build payload
       const payload = {
         title,
-        club_id: '1fbc0696-6500-4852-bf55-d0314d30c6dc', // Provided club_id
+        club_id: selectedClub, // Provided club_id
         description,
         location: medium === 'offline' ? location : null,
         participants: [], // Explicitly set to an empty array
@@ -259,6 +307,20 @@ function CreateEventLogic() {
       placeholder: 'Please provide a title for your event.',
       value: title,
       cb: setTitle,
+      show: true,
+      required: true,
+    },
+    {
+      label: 'Choose a Club',
+      value: selectedClub,
+      cb: setSelectedClub,
+      type: 'select',
+      options: clubs
+        .filter(club => club.created_by === userId) // Filter clubs created by the user
+        .map(club => ({
+          label: club.name,
+          value: club.id,
+        })),
       show: true,
       required: true,
     },

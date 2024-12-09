@@ -8,6 +8,7 @@ import {
   IoPersonOutline,
   IoTicketOutline,
 } from 'react-icons/io5';
+import { MdOutlineLeaderboard } from 'react-icons/md';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import LogoutLogic from '../Logic/UserLogic.js/Logout.logic';
 import { useNotifications } from '../context/notificationContext';
@@ -86,7 +87,7 @@ function Sidebar() {
       <NavLink className="sidebar-link" to="/dashboard/rsvp">
         <IoPeopleOutline /> RSVPs
       </NavLink>
-      <button className="sidebar-link" onClick={toggleNotificationBar}>
+      {/* <button className="sidebar-link" onClick={toggleNotificationBar}>
         <div className="relative">
           <IoNotificationsOutline />
           {unreadNotifications > 0 && (
@@ -98,7 +99,10 @@ function Sidebar() {
           )}
         </div>
         Notifications
-      </button>
+      </button> */}
+      <NavLink className="sidebar-link" to="/dashboard/leaderboard">
+        <MdOutlineLeaderboard /> Leaderboard
+      </NavLink>
       <div className="mt-auto flex flex-col">
         <NavLink
           title={userInfo?.email}
