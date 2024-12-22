@@ -1,90 +1,52 @@
-import { useEffect, useState } from 'react';
-import { Account, Locale } from 'appwrite';
-import client from '../../appwrite.config.js';
+import { useState } from 'react';
+import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
+const API_BASE_URL = 'https://search-my-club-backend.vercel.app/';
 
 function PhoneLogic() {
   const [phone, setPhone] = useState('');
+  const [requesting, setRequesting] = useState(false);
   const [validateMessage, setValidateMessage] = useState(null);
-  const [signingin, setSigningin] = useState(false);
-  const [phoneCode, setPhoneCode] = useState(null);
-
-  const { state } = useLocation();
 
   const navigate = useNavigate();
 
-  const { email, password, countryCode } = state;
-
-  useEffect(() => {
-    const getPhoneCode = async () => {
-      const locale = new Locale(client);
-      try {
-        const localesResponse = await locale.listCountriesPhones();
-        setPhoneCode(
-          prev =>
-            localesResponse?.phones?.filter(
-              country =>
-                country.countryCode.toLowerCase() === countryCode.toLowerCase()
-            )[0]?.code
-        );
-      } catch (error) {}
-    };
-    if (countryCode && countryCode.length > 0) getPhoneCode();
-  }, [countryCode]);
-
-  const inputs = [
-    {
-      label: 'Phone Number',
-      placeholder: '1234567890',
-      value: phone,
-      cb: setPhone,
-      type: 'number',
-      required: true,
-    },
-  ];
-
-  const updatePhoneNumber = async e => {
+  const requestOTP = async e => {
     e?.preventDefault();
-    setSigningin(prev => true);
-    setValidateMessage(prev => null);
-
-    const account = new Account(client);
+    setRequesting(true);
+    setValidateMessage(null);
 
     try {
-      const phoneUpdateResponse = await account.updatePhone(
-        `${phoneCode}${phone}`,
-        password
-      );
-
-      const sendOTPResponse = await account.createPhoneVerification();
-
-      toast.success('Phone number updated successfully. Please Check for OTP.');
-      navigate('/auth/otp', {
-        replace: true,
-        state: {
-          ...sendOTPResponse,
-          email,
-          password,
-          phone: `${phoneCode}${phone}`,
-        },
+      await axios.post(`${API_BASE_URL}user/request-otp`, {
+        phone,
       });
+
+      toast.success('OTP sent successfully');
+      navigate('/auth/otp', { state: { phone }, replace: true });
     } catch (error) {
-      setValidateMessage(prev => error.message);
-      toast.error(error.message);
+      setValidateMessage(
+        error.response?.data?.message || 'Failed to request OTP'
+      );
+      toast.error(error.response?.data?.message || 'Failed to request OTP');
     } finally {
-      setSigningin(prev => false);
+      setRequesting(false);
     }
   };
 
   return {
-    inputs,
+    inputs: [
+      {
+        label: 'Phone',
+        placeholder: 'Enter your phone number',
+        value: phone,
+        cb: setPhone,
+        type: 'text',
+      },
+    ],
     validateMessage,
-    signingin,
-    setSigningin,
-    setValidateMessage,
-    updatePhoneNumber,
-    phoneCode,
+    requesting,
+    requestOTP,
   };
 }
 

@@ -22,8 +22,12 @@ import Explore from './pages/landing/Explore';
 import EventPage from './pages/landing/EventPage';
 import Ticket from './components/Ticket';
 import Rsvps from './pages/dashboard/Rsvp';
+import Clubs from './pages/dashboard/Clubs';
 import DashboardScreenLayout from './layouts/DashboardScreenLayout';
 import MarkAttendance from './pages/MarkAttendance';
+import ClubDetails from './pages/dashboard/ClubDetails';
+import CreateClub from './pages/dashboard/CreateClub';
+import Leaderboard from './pages/dashboard/Leaderboard';
 
 function App() {
   return (
@@ -79,6 +83,17 @@ function App() {
               }
             />
             <Route
+              path="clubs"
+              element={
+                <DashboardScreenLayout
+                  title={'Your Clubs'}
+                  createLink={'/createClub'}
+                >
+                  <Clubs />
+                </DashboardScreenLayout>
+              }
+            />
+            <Route
               path="rsvp"
               element={
                 <DashboardScreenLayout title={'Your RSVPs'}>
@@ -87,7 +102,17 @@ function App() {
                 </DashboardScreenLayout>
               }
             />
+            <Route
+              path="leaderboard"
+              element={
+                <DashboardScreenLayout title={'Leaderboard'}>
+                  <Leaderboard />
+                </DashboardScreenLayout>
+              }
+            />
           </Route>
+          <Route path="/club/:id" element={<ClubDetails />} />
+          <Route path="/createClub" element={<CreateClub />} />
           <Route path="/accept-invite/:eventId" element={<AcceptInvite />} />
           <Route path="/verify-email" element={<VeirfyEmail />} />
           <Route path="/mark-attendance" element={<MarkAttendance />} />

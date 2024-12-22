@@ -1,6 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import client from '../../appwrite.config';
-import { Databases, Query } from 'appwrite';
 import {
   useSearchParams,
   useParams,
@@ -25,80 +23,72 @@ function GetEventLogic() {
   const [error, setError] = useState(null);
 
   const buildQuery = useCallback(() => {
-    const userQuery = Query.equal(
-      'createdBy',
-      JSON.parse(localStorage.getItem('token')).userId
-    );
+    const userId = localStorage.getItem('token');
     if (filter === 'private' || filter === 'public')
-      return [Query.equal('privacy', filter), userQuery];
+      return { privacy: filter, createdBy: userId };
     if (filter === 'offline' || filter === 'online')
-      return [Query.equal('medium', filter), userQuery];
-    return [
-      Query.equal('privacy', filter?.split(',')),
-      Query.equal('medium', filter?.split(',')),
-      userQuery,
-    ];
+      return { medium: filter, createdBy: userId };
+    return {
+      createdBy: userId,
+      filters: filter?.split(','),
+    };
   }, [filter]);
 
   const getEvents = useCallback(async () => {
     try {
-      setLoading(prev => true);
-      const database = new Databases(client);
-      const response = await database.listDocuments(
-        process.env.REACT_APP_DATABASE_ID,
-        process.env.REACT_APP_EVENTS_COLLECTION_ID,
+      setLoading(true);
+      const userId = localStorage.getItem('token');
+      const query =
         filter === null || filter === 'total'
-          ? [
-              Query.equal(
-                'createdBy',
-                JSON.parse(localStorage.getItem('token')).userId
-              ),
-            ]
-          : buildQuery()
-      );
+          ? { createdBy: userId }
+          : buildQuery();
 
-      setEvents(prev => response?.documents);
-      setEventCount(prev => response?.total);
-      setPrivateEvent(prev =>
-        response?.documents?.filter(event => event.privacy === 'private')
+      const queryString = new URLSearchParams(query).toString();
+      const response = await fetch(
+        `https://search-my-club-backend.vercel.app/api/event?${queryString}`
       );
-      setPublicEvent(prev =>
-        response?.documents?.filter(event => event.privacy === 'public')
-      );
-      setOfflineEvent(prev =>
-        response?.documents?.filter(event => event.medium === 'offline')
-      );
-      setOnlineEvent(prev =>
-        response?.documents?.filter(event => event.medium === 'online')
-      );
+      const data = await response.json();
+
+      if (!response.ok)
+        throw new Error(data.message || 'Failed to fetch events.');
+
+      setEvents(data);
+      setEventCount(data.length);
+      setPrivateEvent(data.filter(event => event.privacy === 'Private'));
+      setPublicEvent(data.filter(event => event.privacy === 'Public'));
+      setOfflineEvent(data.filter(event => event.medium === 'In Person'));
+      setOnlineEvent(data.filter(event => event.medium === 'Online'));
     } catch (err) {
-      setError(prev => err.message);
+      setError(err.message);
     } finally {
-      setLoading(prev => false);
+      setLoading(false);
     }
-  }, [searchParams]);
+  }, [filter, buildQuery]);
 
   const getEventById = useCallback(async () => {
     try {
-      setLoading(prev => true);
-      const database = new Databases(client);
-      const response = await database.getDocument(
-        process.env.REACT_APP_DATABASE_ID,
-        process.env.REACT_APP_EVENTS_COLLECTION_ID,
-        id
+      setLoading(true);
+      const response = await fetch(
+        `https://search-my-club-backend.vercel.app/api/event/${id}`
       );
+      const data = await response.json();
 
-      if (!pathname.includes('dashboard') && response.privacy === 'private')
+      if (!response.ok)
+        throw new Error(data.message || 'Failed to fetch the event.');
+
+      if (!pathname.includes('dashboard') && data.privacy === 'Private') {
         throw new Error('This event is private');
-      setEvents(prev => response);
+      }
+
+      setEvents(data);
     } catch (err) {
-      setError(prev => err.message);
+      setError(err.message);
       toast.error(err.message);
       navigate(-1);
     } finally {
-      setLoading(prev => false);
+      setLoading(false);
     }
-  }, []);
+  }, [id, pathname, navigate]);
 
   useEffect(() => {
     if (id) getEventById();
@@ -121,4 +111,5 @@ function GetEventLogic() {
     getEvents,
   };
 }
+
 export default GetEventLogic;

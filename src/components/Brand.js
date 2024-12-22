@@ -9,7 +9,7 @@ function Brand({ size }) {
   return (
     <Link
       title="Home"
-      className={`font-extrabold gap-2 capitalize inline-flex text-xl items-center ${(pathname.includes('dashboard') || pathname.includes('auth')) && 'text-primary'} font-poppins`}
+      className={`font-extrabold gap-2 capitalize inline-flex text-xl items-center ${(pathname.includes('dashboard') || pathname.includes('auth')) && 'text-black'} font-poppins`}
       to={'/'}
     >
       <img

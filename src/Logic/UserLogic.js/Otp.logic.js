@@ -1,106 +1,56 @@
-import { useEffect, useState } from 'react';
-import { Account } from 'appwrite';
-import client from '../../appwrite.config.js';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+const API_BASE_URL = 'https://search-my-club-backend.vercel.app/';
 
 function OtpLogic() {
-  const [validateMessage, setValidateMessage] = useState(null);
-  const [signingin, setSigningin] = useState(false);
   const [otp, setOtp] = useState('');
-  const [timeLeft, setTimeLeft] = useState('');
-  const [timeString, setTimeString] = useState('');
+  const [verifying, setVerifying] = useState(false);
+  const [validateMessage, setValidateMessage] = useState(null);
 
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const { userId, phone, expire } = state;
+  const location = useLocation();
+  const { email } = location.state;
 
-  const inputs = [
-    {
-      label: 'OTP',
-      placeholder: 'Please enter OTP',
-      value: otp,
-      cb: setOtp,
-      type: 'number',
-      required: true,
-    },
-  ];
-
-  useEffect(() => {
-    setTimeLeft(
-      prev =>
-        new Date(expire?.split(' ').join('+')).getTime() - new Date().getTime()
-    );
-    setTimeString(prev => {
-      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-      return `${minutes <= 9 ? '0' : ''}${minutes}:${seconds <= 9 ? '0' : ''}${seconds}`;
-    });
-  }, [expire]);
-
-  useEffect(() => {
-    if (timeLeft > 0) {
-      const interval = setInterval(() => {
-        setTimeLeft(prev => prev - 1000);
-        setTimeString(prev => {
-          const minutes = Math.floor(
-            (timeLeft % (1000 * 60 * 60)) / (1000 * 60)
-          );
-          const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-          return `${minutes <= 9 ? '0' : ''}${minutes}:${seconds <= 9 ? '0' : ''}${seconds}`;
-        });
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [timeLeft]);
-
-  const updatePhoneVerificationStatus = async e => {
+  const verifyOTP = async e => {
     e?.preventDefault();
-    setSigningin(prev => true);
-    setValidateMessage(prev => null);
-
-    const account = new Account(client);
+    setVerifying(true);
+    setValidateMessage(null);
 
     try {
-      const sendOTPResponse = await account.updatePhoneVerification(
-        userId,
-        otp
-      );
+      const response = await axios.post(`${API_BASE_URL}user/verify-otp`, {
+        email,
+        otp,
+      });
 
-      toast.success('OTP verified successfully.');
+      localStorage.setItem('token', response.data.token);
+      toast.success('OTP verified successfully');
       navigate('/', { replace: true });
     } catch (error) {
-      setValidateMessage(prev => error.message);
-    } finally {
-      setSigningin(prev => false);
-    }
-  };
-
-  const resendCode = async () => {
-    const account = new Account(client);
-    try {
-      const sendOTPResponse = await account.createPhoneVerification();
-
-      toast.success('OTP resend successfully.');
-      setTimeLeft(
-        new Date(sendOTPResponse?.expire).getTime() - new Date().getTime()
+      setValidateMessage(
+        error.response?.data?.message || 'OTP verification failed'
       );
-    } catch (err) {
-      toast.error('Internal Server Error.');
+      toast.error(error.response?.data?.message || 'OTP verification failed');
+    } finally {
+      setVerifying(false);
     }
   };
 
   return {
-    inputs,
+    inputs: [
+      {
+        label: 'OTP',
+        placeholder: 'Enter the OTP',
+        value: otp,
+        cb: setOtp,
+        type: 'text',
+      },
+    ],
     validateMessage,
-    signingin,
-    setSigningin,
-    setValidateMessage,
-    updatePhoneVerificationStatus,
-    timeLeft,
-    timeString,
-    phone,
-    resendCode,
+    verifying,
+    verifyOTP,
   };
 }
 

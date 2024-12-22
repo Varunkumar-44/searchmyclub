@@ -1,6 +1,18 @@
 import { Link } from 'react-router-dom';
 import { cn } from '../../utils/cn';
 import React, { useEffect, useState, useRef } from 'react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper';
+import {
+  IoCreateOutline,
+  IoNotificationsOutline,
+  IoTicketOutline,
+  IoPeopleOutline,
+} from 'react-icons/io5';
+import { MdOutlinePrivacyTip, MdOutlineFileDownload } from 'react-icons/md';
 
 export const InfiniteMovingCards = ({
   items,
@@ -11,12 +23,11 @@ export const InfiniteMovingCards = ({
 }) => {
   const containerRef = useRef(null);
   const scrollerRef = useRef(null);
+  const [start, setStart] = useState(false);
 
   useEffect(() => {
     addAnimation();
   }, []);
-
-  const [start, setStart] = useState(false);
 
   function addAnimation() {
     if (containerRef.current && scrollerRef.current) {
@@ -27,13 +38,13 @@ export const InfiniteMovingCards = ({
         scrollerRef.current.appendChild(duplicatedItem);
       });
 
-      getDirection();
-      getSpeed();
+      setDirection();
+      setSpeed();
       setStart(true);
     }
   }
 
-  const getDirection = () => {
+  const setDirection = () => {
     if (containerRef.current) {
       containerRef.current.style.setProperty(
         '--animation-direction',
@@ -42,7 +53,7 @@ export const InfiniteMovingCards = ({
     }
   };
 
-  const getSpeed = () => {
+  const setSpeed = () => {
     if (containerRef.current) {
       const speeds = {
         fast: '20s',
@@ -56,34 +67,52 @@ export const InfiniteMovingCards = ({
     }
   };
 
+  // Array of colors for the card backgrounds
+  const colors = [
+    'bg-blue-400',
+    'bg-green-400',
+    'bg-purple-400',
+    'bg-yellow-400',
+    'bg-red-400',
+    'bg-indigo-400',
+  ];
+
   return (
-    <div
-      ref={containerRef}
-      className={cn(
-        'scroller relative z-20 max-w-7xl overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]',
-        className
-      )}
-    >
-      <ul
-        ref={scrollerRef}
-        className={cn(
-          'flex min-w-full shrink-0 gap-8 py-4 w-max flex-nowrap',
-          start && 'animate-scroll',
-          pauseOnHover && 'hover:[animation-play-state:paused]'
-        )}
-      >
-        {items.map((item, idx) => (
-          <Link
-            to={item.link}
-            key={idx}
-            className="flex w-96 flex-col rounded-lg bg-white backdrop-blur-xl shadow-lg shadow-accent/20 gap-4 items-start justify-center p-6 group text-secondary outline outline-1 outline-neutral-100/40 hover:scale-105 transition-all"
-          >
-            <div className="text-5xl">{item.icon}</div>
-            <h3 className="font-bold text-xl">{item.title}</h3>
-            <p className="text-slate-600 text-sm">{item.description}</p>
-          </Link>
-        ))}
-      </ul>
-    </div>
+    <section className="w-full py-6 bg-white relative z-10">
+      <div className="container mx-auto px-4">
+        <Swiper
+          spaceBetween={20}
+          slidesPerView={3}
+          autoplay={{
+            delay: 3500,
+            disableOnInteraction: false,
+          }}
+          loop={true}
+          modules={[Autoplay]}
+          className="h-full w-full flex justify-center items-center my-auto"
+        >
+          {items.map((item, idx) => (
+            <SwiperSlide
+              key={idx}
+              className="flex justify-center mx-44 md:mx-0"
+            >
+              <Link
+                to="#"
+                key={idx}
+                className={`flex flex-col w-60 h-80 rounded-2xl shadow-lg overflow-hidden transition-transform transform hover:scale-105 bg-indigo-700 p-6 group border border-gray-200 hover:shadow-xl px-8`}
+              >
+                <div className="absolute top-4 left-4 w-16 h-16 rounded-full bg-gradient-to-br from-purple-50 to-violet-100 flex items-center justify-center shadow-lg">
+                  <div className="text-4xl text-black">{item.icon}</div>
+                </div>
+                <h3 className="mt-20 font-bold text-lg text-white">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-gray-100 text-sm">{item.description}</p>
+              </Link>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+    </section>
   );
 };
