@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -11,7 +10,8 @@ body,
 .app {
   height: 100%;
   width: 100%;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Inter', sans-serif;
+  font-optical-sizing: auto;
   @apply bg-gray-100;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
@@ -74,7 +74,7 @@ body,
 .testimonial-title::after {
   content: open-quote;
   position: absolute;
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: 'Inter', sans-serif;
   isolation: isolate;
   font-size: 13rem;
   z-index: -1;
@@ -136,7 +136,7 @@ input[type='number'] {
 }
 
 .active {
-  @apply text-accent;
+  @apply text-indigo-700;
 }
 
 .sidebar-link {

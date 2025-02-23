@@ -90,6 +90,33 @@ function Dashboard() {
           </div>
         )}
       </div>
+      <div>
+        <h1 className="page-title">Achievers</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 max-w-screen-md">
+          <div className="border border-neutral-300 rounded-lg shadow-md">
+            <img src="https://placehold.co/600x400" />
+            <h2 className="text-lg font-bold mt-2 px-4">Pranav</h2>
+            <p className="text-sm text-neutral-600 px-4">
+              Achievement: Winner of the National Coding Championship 2023.
+            </p>
+            <p className="text-sm text-neutral-500 mt-2 p-4 pt-0">
+              Description: Pranav demonstrated exceptional problem-solving and
+              coding skills, outperforming 5000+ participants nationwide.
+            </p>
+          </div>
+          <div className="border border-neutral-300 rounded-lg shadow-md">
+            <img src="https://placehold.co/600x400" />
+            <h2 className="text-lg font-bold mt-2 px-4">Pratith</h2>
+            <p className="text-sm text-neutral-600 px-4">
+              Achievement: Organized a successful tech fest, *TechFusion 2023*.
+            </p>
+            <p className="text-sm text-neutral-500 mt-2 p-4 pt-0">
+              Description: Pratith led a team of 50 to organize one of the
+              largest college tech events, attracting over 2000 attendees.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

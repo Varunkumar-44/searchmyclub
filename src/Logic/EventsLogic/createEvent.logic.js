@@ -1,21 +1,20 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import client from '../../appwrite.config';
-import { Databases, Storage, ID, Teams } from 'appwrite';
-import { categories } from './categories';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useSearchParams } from 'react-router-dom';
+import { categories } from './categories';
 
 function CreateEventLogic() {
   const [validateMessage, setValidateMessage] = useState(null);
   const [signingin, setSigningin] = useState(false);
+  const [clubs, setClubs] = useState([]);
+  const [selectedClub, setSelectedClub] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   const [searchParams] = useSearchParams();
-
   const id = searchParams.get('id');
 
   const navigate = useNavigate();
-
   const fileRef = useRef(null);
 
   const [title, setTitle] = useState('');
@@ -39,10 +38,56 @@ function CreateEventLogic() {
   const [imagePreview, setImagePreview] = useState(null);
   const [fetchedDoc, setFetchedDoc] = useState(null);
   const [fetchingDoc, setFetchingDoc] = useState(false);
-  const [imageId, setImageId] = useState(null);
   const [tnc, setTnc] = useState(null);
   const [acceptingAttendance, setAcceptingAttendance] = useState(false);
   const [acceptingRsvp, setAcceptingRsvp] = useState(false);
+
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  // To fetch clubs created by the user
+  const fetchClubs = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/club`, {
+        headers: {
+          Authorization: `Bearer ${process.env.JWT_TOKEN}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch clubs.');
+      }
+
+      const clubsData = await response.json();
+      setClubs(clubsData); // Assuming the API returns an array of clubs
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }, [API_BASE_URL]);
+
+  const fetchUser = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/user/${token}`, {
+          headers: {
+            Authorization: `Bearer ${process.env.JWT_TOKEN}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data.');
+        }
+
+        const userData = await response.json();
+        setUserId(userData.id);
+      } catch (err) {
+        toast.error(err.message);
+      }
+    }
+  }, [API_BASE_URL]);
+  useEffect(() => {
+    fetchClubs();
+    fetchUser();
+  }, [fetchClubs, fetchUser]);
 
   const handleImage = e => {
     if (e.target.files[0]) {
@@ -54,13 +99,18 @@ function CreateEventLogic() {
 
   const getEventById = useCallback(async () => {
     try {
-      setFetchingDoc(prev => true);
-      const database = new Databases(client);
-      const response = await database.getDocument(
-        process.env.REACT_APP_DATABASE_ID,
-        process.env.REACT_APP_EVENTS_COLLECTION_ID,
-        id
-      );
+      setFetchingDoc(true);
+      const response = await fetch(`${API_BASE_URL}/event/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch event data.');
+      }
+
+      const event = await response.json();
 
       const {
         title,
@@ -74,42 +124,41 @@ function CreateEventLogic() {
         meet,
         privacy,
         image,
-        imageId,
         duration,
         language,
         tnc,
         acceptingAttendance,
         acceptingRsvp,
-      } = response;
-      setFetchedDoc(prev => response);
-      setTitle(prev => title);
-      setDescription(prev => description);
-      setLocation(prev => location[0]);
-      setLatitude(prev => location[1]);
-      setLongitude(prev => location[2]);
-      setStartDate(prev => startDate?.split('+')[0]);
-      setEndDate(prev => endDate?.split('+')[0]);
-      setDuration(prev => duration);
-      setLanguage(prev => language);
-      setMaxParticipants(prev => maxParticipants);
-      setCategory(prev => category);
-      setMedium(prev => medium);
-      setMeetLink(prev => meet[0]);
-      setMeetId(prev => meet[1]);
-      setMeetPassword(prev => meet[2]);
-      setPrivacy(prev => privacy);
-      setImage(prev => image);
-      setImagePreview(prev => image);
-      setImageId(prev => imageId);
-      setTnc(prev => tnc);
-      setAcceptingAttendance(prev => acceptingAttendance);
-      setAcceptingRsvp(prev => acceptingRsvp);
+      } = event;
+
+      setFetchedDoc(event);
+      setTitle(title);
+      setDescription(description);
+      setLocation(location[0]);
+      setLatitude(location[1]);
+      setLongitude(location[2]);
+      setStartDate(startDate);
+      setEndDate(endDate);
+      setDuration(duration);
+      setLanguage(language);
+      setMaxParticipants(maxParticipants);
+      setCategory(category);
+      setMedium(medium);
+      setMeetLink(meet[0]);
+      setMeetId(meet[1]);
+      setMeetPassword(meet[2]);
+      setPrivacy(privacy);
+      setImage(image);
+      setImagePreview(image);
+      setTnc(tnc);
+      setAcceptingAttendance(acceptingAttendance);
+      setAcceptingRsvp(acceptingRsvp);
     } catch (err) {
       toast.error(err.message);
     } finally {
-      setFetchingDoc(prev => false);
+      setFetchingDoc(false);
     }
-  }, [id]);
+  }, [id, API_BASE_URL]);
 
   useEffect(() => {
     if (id) getEventById();
@@ -173,149 +222,82 @@ function CreateEventLogic() {
 
   const handleCreateEvent = async e => {
     e?.preventDefault();
-    const token = JSON.parse(localStorage.getItem('token'));
+    const token = localStorage.getItem('token');
 
-    setSigningin(prev => true);
-    setValidateMessage(prev => null);
+    setSigningin(true);
+    setValidateMessage(null);
+
     try {
-      if (!title) {
-        throw new Error('Please provide a title for your event.');
-      }
-      if (!description) {
+      // Validate required fields
+      if (!title) throw new Error('Please provide a title for your event.');
+      if (!description)
         throw new Error('Please provide a description for your event.');
-      }
-      if (!privacy) {
-        throw new Error('Please provide a privacy for your event.');
-      }
-      if (!startDate) {
+      if (!privacy) throw new Error('Please provide privacy for your event.');
+      if (!startDate)
         throw new Error('Please provide a start date for your event.');
-      }
-      if (endDate) {
-        if (new Date(endDate) < new Date(startDate)) {
-          throw new Error('End date cannot be before start date.');
-        }
-      }
-      if (!category) {
+      if (endDate && new Date(endDate) < new Date(startDate))
+        throw new Error('End date cannot be before start date.');
+      if (!category)
         throw new Error('Please provide a category for your event.');
-      }
       if (medium === 'offline') {
-        if (!location) {
+        if (!location)
           throw new Error('Please provide a location for your event.');
-        }
-        if (!latitude) {
-          throw new Error('Please provide a latitude for your event.');
-        }
-        if (!longitude) {
-          throw new Error('Please provide a longitude for your event.');
-        }
+        if (!latitude || isNaN(latitude))
+          throw new Error('Latitude must be a valid number.');
+        if (!longitude || isNaN(longitude))
+          throw new Error('Longitude must be a valid number.');
       }
-      // if (medium === "online") {
-      //   if (!meetLink) {
-      //     throw new Error("Please provide a meeting link for your event.");
-      //   }
-      //   if (!meetId) {
-      //     throw new Error("Please provide a meeting id for your event.");
-      //   }
-      // }
-      if (image === null) {
-        throw new Error('Please provide an image for your event.');
+      if (medium === 'online' && !meetLink)
+        throw new Error('Please provide a meeting link for your event.');
+
+      // Build payload
+      const payload = {
+        title,
+        club_id: selectedClub, // Provided club_id
+        description,
+        location: medium === 'offline' ? location : null,
+        participants: [], // Explicitly set to an empty array
+        max_participants: maxParticipants || 0,
+        latitude: medium === 'offline' ? parseFloat(latitude) : null,
+        longitude: medium === 'offline' ? parseFloat(longitude) : null,
+        language: language || 'English',
+        terms_and_conditions: tnc || '',
+        category,
+        medium: medium === 'offline' ? 'In Person' : 'Online', // Translate medium values
+        start_date: new Date(startDate).toISOString(),
+        end_date: endDate ? new Date(endDate).toISOString() : null,
+        is_rsvping: acceptingRsvp || false,
+        duration: duration || null,
+        privacy,
+        image: image ? image : null, // Ensure image is null if not provided
+      };
+
+      // API call
+      const response = await fetch(
+        `https://search-my-club-backend.vercel.app/api/event`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload), // Send JSON payload
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create event.');
       }
-      try {
-        let uploadedFile, filePreviewUrl;
-        const storage = new Storage(client);
-        if (typeof image !== 'string') {
-          if (fetchedDoc?.imageId) {
-            const deletedFile = await storage.deleteFile(
-              process.env.REACT_APP_IMAGES_BUCKET_ID,
-              fetchedDoc?.imageId
-            );
-          }
-          uploadedFile = await storage.createFile(
-            process.env.REACT_APP_IMAGES_BUCKET_ID,
-            ID.unique(),
-            image
-          );
 
-          filePreviewUrl = await storage.getFilePreview(
-            uploadedFile.bucketId,
-            uploadedFile.$id
-          );
-        } else if (image === null) {
-          const deletedFile = await storage.deleteFile(
-            process.env.REACT_APP_IMAGES_BUCKET_ID,
-            fetchedDoc?.imageId
-          );
-
-          filePreviewUrl = null;
-        } else {
-          filePreviewUrl = image;
-        }
-        const value = {
-          title,
-          description,
-          medium,
-          startDate,
-          endDate,
-          category,
-          maxParticipants:
-            String(maxParticipants).length === 0 ? 0 : maxParticipants,
-          location:
-            medium === 'online'
-              ? []
-              : [String(location), String(latitude), String(longitude)],
-          meet:
-            medium === 'offline'
-              ? []
-              : [String(meetLink), String(meetId), String(meetPassword)],
-          privacy,
-          createdBy: token.userId,
-          image: filePreviewUrl,
-          imageId: filePreviewUrl ? uploadedFile?.$id : fetchedDoc?.imageId,
-          tnc,
-          acceptingAttendance,
-          duration,
-          language,
-          acceptingRsvp,
-        };
-        const updatedValues = id ? getUpdatedValues(value) : value;
-
-        const databases = new Databases(client);
-        const teams = new Teams(client);
-        let teamId;
-        if (id === undefined || id === null || id === '' || !id) {
-          const teamResponse = await teams.create(ID.unique(), title);
-
-          teamId = teamResponse.$id;
-        }
-        const response = id
-          ? await databases.updateDocument(
-              process.env.REACT_APP_DATABASE_ID,
-              process.env.REACT_APP_EVENTS_COLLECTION_ID,
-              id,
-              updatedValues
-            )
-          : await databases.createDocument(
-              process.env.REACT_APP_DATABASE_ID,
-              process.env.REACT_APP_EVENTS_COLLECTION_ID,
-              ID.unique(),
-              { ...value, teamId }
-            );
-
-        if (title !== fetchedDoc?.title) {
-          const teamNameUpdate = await teams.updateName(teamId, title);
-        }
-        // const updateTeamPreferences = await teams.updatePrefs( teamId, {...fetchedDoc?, ...response } )
-        //
-        toast.success(`Event ${id ? 'updated' : 'created'} successfully`);
-        navigate(-1);
-      } catch (error) {
-        setValidateMessage(prev => error.message);
-        toast.error(error.message);
-      }
+      // Success
+      toast.success('Event created successfully');
+      navigate(-1);
     } catch (err) {
+      setValidateMessage(err.message);
       toast.error(err.message);
     } finally {
-      setSigningin(prev => false);
+      setSigningin(false);
     }
   };
 
@@ -325,6 +307,20 @@ function CreateEventLogic() {
       placeholder: 'Please provide a title for your event.',
       value: title,
       cb: setTitle,
+      show: true,
+      required: true,
+    },
+    {
+      label: 'Choose a Club',
+      value: selectedClub,
+      cb: setSelectedClub,
+      type: 'select',
+      options: clubs
+        .filter(club => club.created_by === userId) // Filter clubs created by the user
+        .map(club => ({
+          label: club.name,
+          value: club.id,
+        })),
       show: true,
       required: true,
     },

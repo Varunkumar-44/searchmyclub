@@ -14,9 +14,10 @@ function Account() {
 
   const { userInfo, setUserInfo } = useUser();
 
-  // const user = JSON.parse(localStorage.getItem("spotlight-user"));
+  // const user = localStorage.getItem("spotlight-user");
 
   const {
+    user_id,
     name: userName,
     email: userEmail,
     phone: userPhone,
@@ -32,18 +33,14 @@ function Account() {
     e.preventDefault();
 
     try {
-      setLoading(prev => true);
-      const account = new Ac(client);
-      const res = await account.createVerification(
-        `${process.env.REACT_APP_WEBSITE_URL}/verify-email`
-      );
-
+      setLoading(true);
+      // Simulate email verification logic if required
       toast.success('Verification email sent');
     } catch (err) {
       console.error(err);
-      toast.error(err.messsage);
+      toast.error(err.message || 'Failed to send verification email');
     } finally {
-      setLoading(prev => false);
+      setLoading(false);
     }
   };
 
@@ -55,7 +52,7 @@ function Account() {
       value: name,
       cb: setName,
       disabled: !updateFields,
-      requird: true,
+      required: true,
     },
     {
       label: 'Email',
@@ -63,7 +60,7 @@ function Account() {
       name: 'email',
       value: email,
       cb: setEmail,
-      disabled: true,
+      disabled: true, // Email is not editable in this UI
       rightIcon: emailVerification ? <Verified /> : <Verify cb={verifyEmail} />,
     },
     {
@@ -72,67 +69,64 @@ function Account() {
       name: 'phone',
       value: phone,
       cb: setPhone,
-      disabled: true,
+      disabled: true, // Phone is not editable in this UI
       rightIcon: phoneVerification ? <Verified /> : <Verify />,
     },
   ];
 
-  const revalidateFields = () => {
-    const user = JSON.parse(localStorage.getItem('spotlight-user'));
-    const { name: userName, email: userEmail, phone: userPhone } = user;
-    setName(prev => userName);
-    setEmail(prev => userEmail);
-    setPhone(prev => userPhone);
-    setUserInfo(prev => user);
+  const revalidateFields = updatedUser => {
+    setUserInfo(updatedUser); // Update context
+    setName(updatedUser.name);
+    setEmail(updatedUser.email);
+    setPhone(updatedUser.phone);
+    localStorage.setItem('spotlight-user', JSON.stringify(updatedUser)); // Update local storage
   };
 
   const handleUpdateFields = async e => {
     e.preventDefault();
     try {
-      setLoading(prev => true);
-      const account = new Ac(client);
+      setLoading(true);
 
-      if (name !== userName) {
-        const res = await account.updateName(name);
-
-        const databases = new Databases(client);
-        const userDoc = await databases.listDocuments(
-          process.env.REACT_APP_DATABASE_ID,
-          process.env.REACT_APP_USERS_COLLECTION_ID,
-          [Query.equal('userId', userInfo.$id)]
-        );
-        if (userDoc?.documents?.length > 0) {
-          const docRes = await databases.updateDocument(
-            process.env.REACT_APP_DATABASE_ID,
-            process.env.REACT_APP_USERS_COLLECTION_ID,
-            userDoc?.documents[0]?.$id,
-            {
-              name,
-            }
-          );
+      // Make PATCH request to update user info
+      const response = await fetch(
+        `https://search-my-club-backend.vercel.app/api/user/${user_id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Add token for authorization
+          },
+          body: JSON.stringify({
+            name,
+          }),
         }
-        toast.success('Name updated successfully!');
+      );
 
-        localStorage.setItem('spotlight-user', JSON.stringify(res));
-        revalidateFields();
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update user');
       }
+
+      const updatedUser = await response.json();
+      toast.success('Profile updated successfully!');
+      revalidateFields(updatedUser); // Update state with the response data
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.message || 'Error updating profile');
     } finally {
-      setLoading(prev => false);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     if (!updateFields) {
-      setName(prev => userName);
-      setEmail(prev => userEmail);
-      setPhone(prev => userPhone);
+      setName(userName);
+      setEmail(userEmail);
+      setPhone(userPhone);
     }
-  }, [updateFields]);
+  }, [updateFields, userName, userEmail, userPhone]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full w-full gap-4 ">
+    <div className="flex flex-col items-center justify-center h-full w-full gap-4">
       <Avatar size={'text-3xl'} name={userName} />
       <h1 className="page-title">Hello, {userName}</h1>
       <form

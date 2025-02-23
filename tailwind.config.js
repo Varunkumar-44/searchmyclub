@@ -27,9 +27,9 @@ module.exports = {
         secondary: '#2563eb',
       },
       fontFamily: {
-        poppins: ['Poppins', 'sans-sarif'],
-        grostek: ['Space Grotesk', 'sans-sarif'],
-        dmsans: ['DM Sans', 'sans-sarif'],
+        poppins: ['Inter', 'sans-sarif'],
+        grostek: ['Inter', 'sans-sarif'],
+        dmsans: ['Inter', 'sans-sarif'],
       },
     },
   },
