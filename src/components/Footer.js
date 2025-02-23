@@ -101,22 +101,22 @@ function Footer() {
 
             <div class="flex flex-col items-start mt-5 space-y-2">
               <a
-                href="#"
-                class="text-gray-600 transition-colors duration-300   hover:underline hover:text-indigo-500"
-              >
-                Explore
-              </a>
-              <a
                 href="/auth/signup"
                 class="text-gray-600 transition-colors duration-300   hover:underline hover:text-indigo-500"
               >
                 Sign-up
               </a>
               <a
-                href="/auth/login"
+                href="/faq"
                 class="text-gray-600 transition-colors duration-300   hover:underline hover:text-indigo-500"
               >
-                Login
+                FAQ
+              </a>
+              <a
+                href="/disclaimer"
+                class="text-gray-600 transition-colors duration-300   hover:underline hover:text-indigo-500"
+              >
+                Disclaimer
               </a>
             </div>
           </div>

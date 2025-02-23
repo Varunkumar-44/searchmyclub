@@ -18,11 +18,14 @@ const EventCard = ({
     end_date,
     participants = [],
     max_participants,
+    isApproved,
   },
 }) => {
   const [eventParticipants, setEventParticipants] = useState(participants);
   const userId = localStorage.getItem('token'); // Assuming the user ID is stored in localStorage
-
+  const rootID = process.env.REACT_APP_ROOT_USER_ID;
+  const [eventApproval, setEventApproval] = useState(isApproved);
+  console.log(rootID, userId === rootID);
   const handleRSVP = async () => {
     // Check if the user is already RSVP'd
     if (eventParticipants.includes(userId)) {
@@ -55,6 +58,7 @@ const EventCard = ({
           end_date,
           participants: updatedParticipants,
           max_participants,
+          isApproved,
         },
       };
 
@@ -82,8 +86,61 @@ const EventCard = ({
     }
   };
 
+  const handleApprove = async () => {
+    try {
+      // Create the updated event object with approval
+      const updatedEventData = {
+        ...{
+          // Spread the current event data to avoid using `event`
+          title,
+          description,
+          category,
+          image,
+          location,
+          event_id,
+          medium,
+          start_date,
+          end_date,
+          participants,
+          max_participants,
+          isApproved: true,
+        },
+      };
+
+      // Send the entire updated event object in the request
+      const response = await fetch(
+        `https://search-my-club-backend.vercel.app/api/event/${event_id}`,
+        {
+          method: 'PATCH', // Use OPTIONS request
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedEventData), // Pass the entire updated event object
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to Approve the event');
+      }
+
+      // Update the local event data with the new participants
+      setEventApproval(true); // Update the state with the new participants
+      toast.success('Approval Successful');
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  // const handleReject = async () => {
+  //   try{
+
+  //   }
+  // }
+
   return (
-    <div className="bg-white overflow-hidden text-black p-2 rounded-[18px] mr-2 outline outline-1 outline-neutral-100 shadow-sm hover:shadow-lg transition-all">
+    <div
+      className={`${userId === rootID || eventApproval === true ? 'bg-white overflow-hidden text-black p-2 rounded-[18px] mr-2 outline outline-1 outline-neutral-100 shadow-sm hover:shadow-lg transition-all' : 'hidden'}`}
+    >
       <Link to={`/dashboard/event/${event_id}`} className="block">
         <div className="relative">
           <img
@@ -158,11 +215,21 @@ const EventCard = ({
             className={`${
               eventParticipants.length >= max_participants
                 ? 'bg-gray-500 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-600'
+                : 'bg-indigo-500 hover:bg-indigo-600'
             } text-white py-2 px-4 rounded transition-all`}
           >
             RSVP Now
           </button>
+        )}
+        {userId === rootID && !eventApproval ? (
+          <button
+            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition-all"
+            onClick={handleApprove}
+          >
+            Approve
+          </button>
+        ) : (
+          <button className="hidden"></button>
         )}
       </div>
     </div>

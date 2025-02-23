@@ -28,6 +28,8 @@ import MarkAttendance from './pages/MarkAttendance';
 import ClubDetails from './pages/dashboard/ClubDetails';
 import CreateClub from './pages/dashboard/CreateClub';
 import Leaderboard from './pages/dashboard/Leaderboard';
+import FAQPage from './pages/FAQ';
+import DisclaimerPage from './pages/Disclaimer';
 
 function App() {
   return (
@@ -116,6 +118,8 @@ function App() {
           <Route path="/accept-invite/:eventId" element={<AcceptInvite />} />
           <Route path="/verify-email" element={<VeirfyEmail />} />
           <Route path="/mark-attendance" element={<MarkAttendance />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/disclaimer" element={<DisclaimerPage />} />
         </Routes>
       </Router>
     </>
